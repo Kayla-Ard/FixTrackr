@@ -1,0 +1,18 @@
+{% extends "master.html" %}
+
+{% block title %}
+    FixTrackr - List of all Property Managers
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="mycard">
+        <h1>Property Managers</h1>
+        <ul>
+            {% for x in property_managers %}
+            <li onclick="window.location = 'details/{{ x.id }}'">{{ x.first_name }} {{ x.last_name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
