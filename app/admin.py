@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Property_Manager
+from .models import Property_Manager, MaintenanceRequest
 
 # This is where we register our models(tables)
 
@@ -9,3 +9,6 @@ class Property_Manager_Admin(admin.ModelAdmin):
 
 # Registering the Property Manager class from models.py
 admin.site.register(Property_Manager, Property_Manager_Admin)
+
+# Registering the Maintenance Request class from models.py
+admin.site.register(MaintenanceRequest)

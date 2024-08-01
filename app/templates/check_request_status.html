@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Request Status</title>
+</head>
+<body>
+    <h1>Check Request Status</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="request_number">Request Number:</label>
+        <input type="text" id="request_number" name="request_number">
+        <button type="submit">Check Status</button>
+    </form>
+    {% if maintenance_request %}
+    <h2>Status: {{ maintenance_request.status }}</h2>
+    <p>Request Details:</p>
+    <ul>
+        <li>First Name: {{ maintenance_request.name }}</li>
+        <li>Last Name: {{ maintenance_request.name }}</li>
+        <li>Email: {{ maintenance_request.email }}</li>
+        <li>Address: {{ maintenance_request.address }}</li>
+        <li>Notes: {{ maintenance_request.notes }}</li>
+        <li>Submitted on: {{ maintenance_request.created_at }}</li>
+        <li>Status: {{ maintenance_request.status }}</li>
+    </ul>
+    {% endif %}
+</body>
+</html>
