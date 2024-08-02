@@ -3,37 +3,19 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Property_Manager, MaintenanceRequest
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render, get_object_or_404
 from .forms import MaintenanceRequestForm
 import uuid
-from .serializers import MaintenanceRequestSerializer
+from .serializers import MaintenanceRequestSerializer, PropertyManagerSerializer
+from rest_framework.views import APIView
 
-# HTML Views
+# Tenant related HTML Views
 
-def propertymanagers(request):
-    property_managers = Property_Manager.objects.all().values()
-    template = loader.get_template('property_manager.html')
-    context = {
-        'property_managers': property_managers,
-    }
-    return HttpResponse(template.render(context, request))
-
-
-def details(request, id):
-    property_managers = Property_Manager.objects.get(id=id)
-    template = loader.get_template('details.html')
-    context = {
-        'property_managers': property_managers,
-    }
-    return HttpResponse(template.render(context, request))
-
-
-def main(request):
-    template = loader.get_template('main.html')
-    return HttpResponse(template.render())
+def tenant_home(request):
+    return render(request, 'tenant_home.html')
 
 
 def generate_request_number():
@@ -57,28 +39,13 @@ def submit_request(request):
         form = MaintenanceRequestForm()
     return render(request, 'submit_request.html', {'form': form})
 
+
 def check_request_status(request):
     if request.method == 'POST':
         request_number = request.POST.get('request_number')
         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
         return render(request, 'request_status.html', {'maintenance_request': maintenance_request})
     return render(request, 'check_request_status.html')
-
-
-# If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:
-
-# class ExampleProtectedView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         return Response({'message': 'You have access to this view!'})
-
-
-# Testing JWT Authentication
-# We can test JWT authentication using Postman:
-# Obtain Token: Make a POST request to /api/token/ with username & password to get the access & refresh tokens.
-# Access Protected Endpoint: Use the access token in the Authorization header to access protected endpoints.
-
 
 
 
@@ -107,7 +74,42 @@ def check_status_api(request):
     return Response({'error': 'Request number is required'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def api_get_requests(request):
     requests = MaintenanceRequest.objects.all()
     serializer = MaintenanceRequestSerializer(requests, many=True)
     return Response(serializer.data)
+
+
+
+# Property manager API endpoints
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def property_managers_api(request):
+    property_managers = Property_Manager.objects.all()
+    serializer = PropertyManagerSerializer(property_managers, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def property_manager_details_api(request, id):
+    property_manager = get_object_or_404(Property_Manager, id=id)
+    serializer = PropertyManagerSerializer(property_manager)
+    return Response(serializer.data)
+
+
+
+
+
+# If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:
+
+class ExampleProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({'message': 'You have access to this view!'})
+    
+# Testing JWT Authentication
+# We can test JWT authentication using Postman:
+# Obtain Token: Make a POST request to /api/token/ with username & password to get the access & refresh tokens.
+# Access Protected Endpoint: Use the access token in the Authorization header to access protected endpoints.
