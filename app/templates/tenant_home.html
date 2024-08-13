@@ -1,12 +1,33 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FixTrackr</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for tenant home page-->
+    <link href="{% static 'css/tenant_home.css' %}" rel="stylesheet">
 </head>
-<body>
-    <h1>Welcome to FixTrackr</h1>
-    <p>Please select an option below:</p>
-    <button onclick="location.href='{% url 'submit_request' %}'">Submit Maintenance Request</button>
-    <button onclick="location.href='{% url 'check_request_status' %}'">Check Status of Previously Submitted Maintenance Request</button>
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="text-center">
+        <!-- Replace with logo image -->
+        <img src="{% static 'images/blue_logo.png' %}" alt="FixTrackr Logo" class="img-fluid mb-4"> 
+        <h1 class="mb-3">Welcome to FixTrackr.</h1>
+        <br>
+        <p class="mb-4">We are here to help you with your maintenance request. Please fill out a maintenance request form or check on the progress of your request.</p>
+        <br>
+        <button class="custom-btn mb-3 d-block w-100" onclick="location.href='{% url 'submit_request' %}'">Maintenance Request</button>
+        <button class="custom-btn d-block w-100" onclick="location.href='{% url 'check_request_status' %}'">Progress Check</button>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
