@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -146,7 +147,26 @@ STATICFILES_DIRS = [
 STATIC_URL = '/static/'
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+
+
+# handles media files (such as images)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Maximum size (in bytes) for uploaded files
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+
+# Maximum size (in bytes) for the data upload request
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB

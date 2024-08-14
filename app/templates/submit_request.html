@@ -1,14 +1,140 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Maintenance Request</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for submit maintenance request page home page-->
+    <link href="{% static 'css/submit_request.css' %}" rel="stylesheet">
+    <!-- Custom fonts for website-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Submit Maintenance Request</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Please fill out maintenance request</h1>
+        <form method="post" enctype="multipart/form-data" class="maintenance-form">
+            {% csrf_token %}
+            
+            <!-- Full Name Field -->
+            <div class="form-group">
+                {{ form.full_name.label_tag }}
+                {{ form.full_name }}
+                {% if form.full_name.errors %}
+                    <div class="error">
+                        {{ form.full_name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Subject Field -->
+            <div class="form-group">
+                {{ form.subject.label_tag }}
+                {{ form.subject }}
+                {% if form.subject.errors %}
+                    <div class="error">
+                        {{ form.subject.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Message Field -->
+            <div class="form-group">
+                {{ form.message.label_tag }}
+                {{ form.message }}
+                {% if form.message.errors %}
+                    <div class="error">
+                        {{ form.message.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Images Field -->
+            <div class="form-group">
+                <div class="file-upload-container">
+                    <input type="file" id="images" name="images" multiple>
+                    <label for="images" class="file-upload-label">
+                        Attach Images
+                    </label>
+                    <span class="file-upload-icon">
+                        📎
+                    </span>
+                    {% if form.images.errors %}
+                        <div class="error">
+                            {{ form.images.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Availability Field -->
+            <div class="form-group">
+                {{ form.availability.label_tag }}
+                {{ form.availability }}
+                {% if form.availability.errors %}
+                    <div class="error">
+                        {{ form.availability.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Buttons -->
+            <div class="form-buttons">
+                <button type="submit" class="btn submit-btn">Submit</button>
+                <button type="button" class="btn cancel-btn" onclick="location.href='{% url 'tenant_home' %}'">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JS and dependencies if needed -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to handle the file upload click paperclip icon
+        document.querySelector('.file-upload-icon').addEventListener('click', function() {
+            document.getElementById('images').click(); // Trigger the file input click
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('JavaScript loaded'); // Check if this appears in the console
+    
+            var textareas = document.querySelectorAll('textarea');
+    
+            textareas.forEach(function(textarea) {
+                textarea.addEventListener('input', function() {
+                    console.log('Input event fired'); // Check if this appears when typing
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+    
+                textarea.dispatchEvent(new Event('input'));
+            });
+        });
+    </script>
+    
+    
+    
 </body>
 </html>
+

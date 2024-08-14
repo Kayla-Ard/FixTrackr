@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse
 from django.template import loader
-from .models import Property_Manager, MaintenanceRequest
+from .models import Property_Manager, MaintenanceRequest, Image
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -24,19 +24,36 @@ def generate_request_number():
 
 def submit_request(request):
     if request.method == 'POST':
+        # Instantiate the form with POST data and FILES data
         form = MaintenanceRequestForm(request.POST, request.FILES)
+        
         if form.is_valid():
+            # Create a new MaintenanceRequest instance without saving to the database
             maintenance_request = form.save(commit=False)
             maintenance_request.request_number = generate_request_number()
             maintenance_request.save()
-            # Notify the property manager
-            # We can add code to send a notification to the property manager here
+
+            # Handle multiple file uploads
+            files = request.FILES.getlist('images')
+            for file in files:
+                # Create and save the Image instance
+                image = Image(file=file)
+                image.save()
+
+                # Associate the image with the maintenance request
+                maintenance_request.images.add(image)
+
+            # Save the maintenance request again to ensure images are linked
+            maintenance_request.save()  
+
             return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
         else:
-            # Handle form errors
+            # Render the form again with error messages
             return render(request, 'submit_request.html', {'form': form})
     else:
+        # Display an empty form for a GET request
         form = MaintenanceRequestForm()
+        
     return render(request, 'submit_request.html', {'form': form})
 
 
@@ -52,14 +69,23 @@ def check_request_status(request):
 # Mobile App/ RESTful API endpoint
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def submit_request_api(request):
     serializer = MaintenanceRequestSerializer(data=request.data)
     if serializer.is_valid():
         maintenance_request = serializer.save()
         maintenance_request.request_number = generate_request_number()
         maintenance_request.save()
+
+        # Handle file uploads if included in the request
+        files = request.FILES.getlist('images')
+        for file in files:
+            image = Image(file=file, maintenance_request=maintenance_request)
+            image.save()
+
         return Response({'request_number': maintenance_request.request_number}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def check_status_api(request):

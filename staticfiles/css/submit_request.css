@@ -1,0 +1,107 @@
+/* General page styling */
+body {
+    font-family: "Open Sans", sans-serif;
+    background-color: #F3F5F9; /* Light grey background for the page */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #FFF;
+    width: 636px;
+    min-width: 320px;
+    padding: 24px; /* Default padding */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px; /* Gap between elements */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #D9D9D9; /* Light grey border */
+    margin: 40px auto; /* Center the form on the page */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h1 {
+    color: #333333; /* Dark grey color for the heading */
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 28.8px; /* 120% of the font size */
+    letter-spacing: -0.48px;
+    margin-bottom: 24px; /* Space below the heading */
+}
+
+.form-group label {
+    color: #5C5D6D; /* Grey color for labels */
+    font-family: "Open Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    display: block;
+    margin-bottom: 8px; /* Space below labels */
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    color: black;
+    font-family: "Open Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    width: 100%; /* Full-width input */
+    padding: 10px; /* Space inside the input */
+    border: 1px solid #D9D9D9; /* Border color for inputs */
+    border-radius: 8px; /* Rounded corners for inputs */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 20px; /* Space below each input */
+    background-color: #FFF; /* White background for inputs */
+}
+
+input[type="file"] {
+    margin-bottom: 20px; /* Space below the file input */
+}
+
+textarea {
+    min-height: 80px; /* Minimum height for the textarea */
+    padding: 12px 16px; /* Padding inside the textarea */
+    align-self: stretch;
+}
+
+.submit-btn {
+    border-radius: 25px;
+    background-color: #0466C8; /* Primary blue color for the submit button */
+    color: white;
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none; /* Remove default border */
+    cursor: pointer; /* Pointer cursor on hover */
+    width: 100%; /* Full-width button */
+    text-align: center;
+}
+
+.cancel-btn {
+    border-radius: 25px;
+    background-color: white; /* White background for the cancel button */
+    color: #0466C8; /* Primary blue color for the text */
+    font-size: 20px;
+    padding: 10px 20px;
+    border: 2px solid #0466C8; /* Border color for the cancel button */
+    cursor: pointer; /* Pointer cursor on hover */
+    width: 100%; /* Full-width button */
+    text-align: center;
+}
+
+.form-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+    align-items: center; /* Center buttons horizontally */
+}
+
+.error {
+    color: red; /* Color for error messages */
+    margin-top: 5px; /* Space above error messages */
+    font-size: 14px; /* Slightly smaller font size for error messages */
+}
+
