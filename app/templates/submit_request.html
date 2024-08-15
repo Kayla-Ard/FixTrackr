@@ -68,23 +68,42 @@
                 {% endif %}
             </div>
             
-            <!-- Images Field -->
-            <div class="form-group">
-                <div class="file-upload-container">
-                    <input type="file" id="images" name="images" multiple>
-                    <label for="images" class="file-upload-label">
-                        Attach Images
-                    </label>
-                    <span class="file-upload-icon">
-                        📎
-                    </span>
-                    {% if form.images.errors %}
-                        <div class="error">
-                            {{ form.images.errors }}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+           <!-- Images Field -->
+<div class="form-group">
+    <div class="file-upload-container">
+        <input type="file" id="image1" name="image1">
+        <label for="image1" class="file-upload-label">
+            Attach Image 1
+        </label>
+        <span class="file-upload-icon">📎</span>
+    </div>
+
+    <div class="file-upload-container">
+        <input type="file" id="image2" name="image2">
+        <label for="image2" class="file-upload-label">
+            Attach Image 2
+        </label>
+        <span class="file-upload-icon">📎</span>
+    </div>
+
+    <div class="file-upload-container">
+        <input type="file" id="image3" name="image3">
+        <label for="image3" class="file-upload-label">
+            Attach Image 3
+        </label>
+        <span class="file-upload-icon">📎</span>
+    </div>
+    
+    <div class="file-upload-container">
+        <input type="file" id="image4" name="image4">
+        <label for="image4" class="file-upload-label">
+            Attach Image 4
+        </label>
+        <span class="file-upload-icon">📎</span>
+    </div>
+</div>
+
+
             
             <!-- Availability Field -->
             <div class="form-group">
@@ -110,29 +129,49 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // JavaScript to handle the file upload click paperclip icon
-        document.querySelector('.file-upload-icon').addEventListener('click', function() {
-            document.getElementById('images').click(); // Trigger the file input click
-        });
-    </script>
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('JavaScript loaded'); // Check if this appears in the console
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            const fileIcons = document.querySelectorAll('.file-upload-icon');
+            const fileLabels = document.querySelectorAll('.file-upload-label');
     
-            var textareas = document.querySelectorAll('textarea');
+            fileIcons.forEach((icon, index) => {
+                icon.addEventListener('click', function() {
+                    fileInputs[index].click();
+                });
+            });
     
+            fileLabels.forEach((label, index) => {
+                label.addEventListener('click', function() {
+                    fileInputs[index].click();
+                });
+            });
+    
+            fileInputs.forEach((input, index) => {
+                input.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        let fileList = [];
+                        for (let i = 0; i < this.files.length; i++) {
+                            fileList.push(this.files[i].name);
+                        }
+                        fileLabels[index].textContent = fileList.join(', '); // Display the names of selected files
+                        alert("Files attached: " + fileList.join(', ')); // Optional: Alert with file names
+                    } else {
+                        fileLabels[index].textContent = 'Attach Image'; // Reset label if no file is chosen
+                    }
+                });
+            });
+    
+            // Adjust textarea height based on content
+            const textareas = document.querySelectorAll('textarea');
             textareas.forEach(function(textarea) {
                 textarea.addEventListener('input', function() {
-                    console.log('Input event fired'); // Check if this appears when typing
                     this.style.height = 'auto';
                     this.style.height = this.scrollHeight + 'px';
                 });
-    
-                textarea.dispatchEvent(new Event('input'));
+                textarea.dispatchEvent(new Event('input')); // Adjust height initially
             });
         });
     </script>
-    
     
     
 </body>

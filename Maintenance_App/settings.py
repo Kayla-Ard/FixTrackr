@@ -170,3 +170,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 # Maximum size (in bytes) for the data upload request
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+
+# Temporarily trying this to see if the file size is the problem 
+# FILE_UPLOAD_MAX_MEMORY_SIZE = None  # No limit

@@ -1,78 +1,101 @@
-
 body {
     background-color: white; 
-    margin-left: 50px;
-    margin-right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
     font-family: "Open Sans", sans-serif;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+}
+
+.container {
+    width: 100%;
+    max-width: 616px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 25px;
+    background-color: #FFF;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+img {
+    width: 149.813px;
+    height: 164.719px;
+    margin-bottom: 16px;
+    margin-top: 16px;
 }
 
 h1 {
     color: black; 
     font-family: "Work Sans", sans-serif;
     font-size: 32px;
-    font-style: normal;
     font-weight: 600;
-    line-height: normal;
+    max-width: 366px;
+    margin: 16px auto; /* Center within the container */
 }
 
 p {
-    color: #5C5D6D; 
+    color: #5C5D6D;
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
-    font-style: normal;
     font-weight: 400;
-    line-height: normal;
-}
-
-img {
-    max-width: 200px;
-    margin-bottom: 20px;
+    max-width: 366px;
+    margin: 16px auto; /* Center within the container */
 }
 
 button {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 32px;
+    border-radius: 25px;
+    background-color: #0466C8;
+    color: white;
     font-family: "Open Sans", sans-serif;
-    background-color: #0466C8; 
-    color: white;              
-    border: none;              
-    padding: 15px 32px;        
-    text-align: center;        
-    text-decoration: none;     
-    display: inline-block;     
-    font-size: 16px;           
-    margin: 4px 2px;           
-    cursor: pointer;           
-    border-radius: 25px; 
-    font-style: normal;
+    font-size: 16px;
     font-weight: 400;
-    line-height: normal; 
-    width: 366px; 
-    margin: 4px auto;      
+    border: none;
+    cursor: pointer;
+    margin-bottom: 16px;
+    max-width: 366px;
+    width: 100%; /* Ensures buttons take up full container width but do not exceed 366px */
 }
 
 button:hover {
     background-color: #005BBD; 
 }
 
-/* Media query for devices with a width of 430px or less */
-@media (max-width: 430px) {
-    button {
-        width: 100%; /* Make the button width responsive on smaller screens */
+.text-center {
+    text-align: center;
+    max-width: 366px;
+    margin: 0 auto;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 0px 40px;
     }
-    body {
-        margin: 0 32px; /* Set mobile margins */
+
+    img {
+        width: 100px; /* Reduce logo size on smaller screens */
+        height: auto;
+    }
+
+    h1, p, button {
+        max-width: 100%; /* Ensures content scales within the container */
+        width: 100%;
     }
 }
 
-/* Media query for devices with a width greater than 430px */
-@media (min-width: 431px) {
-    button {
-        width: 366px; /* Maintain the fixed width on larger screens */
-    }
-    body {
-        margin: 0 72px; /* Set desktop margins */
-    }
-}
+
+
+
+
+
+
+

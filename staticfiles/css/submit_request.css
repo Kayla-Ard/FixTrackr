@@ -1,31 +1,25 @@
-/* General page styling */
+
 body {
     font-family: "Open Sans", sans-serif;
     background-color: #F3F5F9; /* Light grey background for the page */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
 }
 
 .container {
-    background-color: #FFF;
-    width: 636px;
-    min-width: 320px;
-    padding: 24px; /* Default padding */
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px; /* Gap between elements */
+    width: 636px; /* Fixed width for the form container */
+    padding: 24px; /* Padding inside the container */
     border-radius: 8px; /* Rounded corners */
-    border: 1px solid #D9D9D9; /* Light grey border */
-    margin: 40px auto; /* Center the form on the page */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border: 1px solid #D9D9D9; /* Border color */
+    background: #FFF; /* Background color of the container */
 }
 
 h1 {
     color: #333333; /* Dark grey color for the heading */
-    font-family: "Roboto Condensed", sans-serif;
+    font-family: "Work Sans", sans-serif;
     font-size: 24px;
     font-weight: 700;
     line-height: 28.8px; /* 120% of the font size */
@@ -42,10 +36,30 @@ h1 {
     margin-bottom: 8px; /* Space below labels */
 }
 
-input[type="text"],
-input[type="email"],
+textarea.form-control {
+    width: 100%; /* Adjust to the desired width */
+    min-height: 50px; /* Minimum height */
+    resize: none;
+    overflow: hidden;
+}
+
 textarea {
     color: black;
+    font-family: "Open Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    box-sizing: border-box; /* Include padding and border in element’s total width and height */
+    padding: 10px; /* Space inside the input */
+    border: 1px solid #D9D9D9; /* Border color for inputs */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Space below each input */
+    background-color: #FFF;
+}
+
+input[type="text"],
+input[type="email"]
+{
+    color:#5C5D6D;
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
     font-weight: 400;
@@ -58,38 +72,92 @@ textarea {
     background-color: #FFF; /* White background for inputs */
 }
 
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+    color: #5C5D6D;
+    font-family: "Open Sans", sans-serif; 
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+textarea.form-control::placeholder {
+    color:#5C5D6D;
+    font-family: "Open Sans", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
 input[type="file"] {
+    display: none; /* Hide the default file input */
+    width: 100%; /* Full-width file input */
+    padding: 10px; /* Padding inside the file input */
+    border: 1px solid #D9D9D9; /* Border color for file input */
+    border-radius: 8px; /* Rounded corners for file input */
+    box-sizing: border-box; /* Include padding and border in the element’s total width and height */
     margin-bottom: 20px; /* Space below the file input */
+    position: relative;
 }
 
-textarea {
-    min-height: 80px; /* Minimum height for the textarea */
-    padding: 12px 16px; /* Padding inside the textarea */
-    align-self: stretch;
+.file-upload-container {
+    position: relative;
+    width: 100%; /* Full-width container */
+    display: flex;
+    align-items: center;
+    background-color: #FFF;
+    border: 1px solid #D9D9D9; /* Border color for file input container */
+    border-radius: 8px; /* Rounded corners for file input container */
+    padding: 10px; /* Space inside the container */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    background-color:#F3F5F9;
 }
 
-.submit-btn {
+.file-upload-label {
+    font-family: "Open Sans", sans-serif;
+    font-size: 20px;
+    color: #5C5D6D; /* Grey color for label */
+    width: calc(100% - 40px); /* Adjust width to leave space for the icon */
+    text-align: left; /* Align text to the left */
+    margin: 0; /* Remove margin */
+    padding-left: 10px; /* Add padding to the left */
+}
+
+.file-upload-icon {
+    position: absolute;
+    font-size: 24px; /* Icon size */
+    color: black; 
+    right: 10px; /* Space from the right edge */
+    cursor: pointer; /* Pointer cursor on hover */
+    background-size: cover;
+    display: inline-block; /* Ensure the icon is treated as a block element */
+    transform: rotate(-90deg);
+}
+
+.submit-btn,
+.cancel-btn {
     border-radius: 25px;
-    background-color: #0466C8; /* Primary blue color for the submit button */
-    color: white;
     font-size: 20px;
     padding: 10px 20px;
     border: none; /* Remove default border */
     cursor: pointer; /* Pointer cursor on hover */
     width: 100%; /* Full-width button */
     text-align: center;
+    margin-top: 10px;
+}
+
+.submit-btn {
+    background-color: #0466C8; /* Primary blue color for the submit button */
+    color: white;
 }
 
 .cancel-btn {
-    border-radius: 25px;
     background-color: white; /* White background for the cancel button */
     color: #0466C8; /* Primary blue color for the text */
-    font-size: 20px;
-    padding: 10px 20px;
     border: 2px solid #0466C8; /* Border color for the cancel button */
-    cursor: pointer; /* Pointer cursor on hover */
-    width: 100%; /* Full-width button */
-    text-align: center;
 }
 
 .form-buttons {
@@ -97,6 +165,7 @@ textarea {
     flex-direction: column; /* Stack buttons vertically */
     gap: 10px; /* Space between buttons */
     align-items: center; /* Center buttons horizontally */
+    width: 100%; /* Full width for the buttons container */
 }
 
 .error {
@@ -104,4 +173,11 @@ textarea {
     margin-top: 5px; /* Space above error messages */
     font-size: 14px; /* Slightly smaller font size for error messages */
 }
+
+.maintenance-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Align form elements to the start */
+}
+
 

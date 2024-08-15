@@ -75,7 +75,7 @@ input[type="email"]
 input[type="text"]::placeholder,
 input[type="email"]::placeholder,
 textarea::placeholder {
-    color: black;
+    color: #5C5D6D;
     font-family: "Open Sans", sans-serif; 
     font-size: 20px;
     font-style: normal;
@@ -84,7 +84,7 @@ textarea::placeholder {
 }
 
 textarea.form-control::placeholder {
-    color: black;
+    color:#5C5D6D;
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
     font-style: normal;

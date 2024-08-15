@@ -1,10 +1,23 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Submitted</title>
+    <link href="{% static 'css/request_submitted.css' %}" rel="stylesheet">
 </head>
 <body>
-    <h1>Request Submitted</h1>
-    <p>Your request number is: {{ request_number }}</p>
+    <div class="container">
+        <img src="{% static 'images/blue_logo.png' %}" alt="FixTrackr Logo" class="logo">
+        <h2>Submitted!</h2>
+        <p class="request-number">Request #{{ request_number }}</p>
+        <p class="manager-name">Manager: John Smith</p>
+        <p class="thank-you-message">Thank you for your inquiry! We have sent your maintenance request to your property manager. Please check back on the website by clicking “Progress Check” and entering your request #, shown above. Confirmation has also been emailed to you.</p>
+        <button class="close-btn" onclick="location.href='{% url 'tenant_home' %}'">Close</button>
+    </div>
 </body>
 </html>
+
+

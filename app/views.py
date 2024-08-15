@@ -24,37 +24,35 @@ def generate_request_number():
 
 def submit_request(request):
     if request.method == 'POST':
-        # Instantiate the form with POST data and FILES data
-        form = MaintenanceRequestForm(request.POST, request.FILES)
-        
+        form = MaintenanceRequestForm(request.POST)
         if form.is_valid():
-            # Create a new MaintenanceRequest instance without saving to the database
             maintenance_request = form.save(commit=False)
             maintenance_request.request_number = generate_request_number()
             maintenance_request.save()
 
-            # Handle multiple file uploads
-            files = request.FILES.getlist('images')
-            for file in files:
-                # Create and save the Image instance
-                image = Image(file=file)
-                image.save()
+            # Process each image field separately
+            image_fields = ['image1', 'image2', 'image3', 'image4']
+            for image_field in image_fields:
+                image_file = request.FILES.get(image_field)
+                if image_file:
+                    image = Image(file=image_file)
+                    image.save()
+                    setattr(maintenance_request, image_field, image)
 
-                # Associate the image with the maintenance request
-                maintenance_request.images.add(image)
-
-            # Save the maintenance request again to ensure images are linked
-            maintenance_request.save()  
-
+            maintenance_request.save()
             return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
         else:
-            # Render the form again with error messages
+            print(form.errors)  # Output errors for inspection
             return render(request, 'submit_request.html', {'form': form})
     else:
-        # Display an empty form for a GET request
         form = MaintenanceRequestForm()
-        
     return render(request, 'submit_request.html', {'form': form})
+
+
+
+
+
+
 
 
 def check_request_status(request):
