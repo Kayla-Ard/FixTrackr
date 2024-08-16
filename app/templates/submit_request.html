@@ -8,7 +8,7 @@
     <title>Submit Maintenance Request</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS for submit maintenance request page home page-->
+    <!-- Custom CSS for submit maintenance request page-->
     <link href="{% static 'css/submit_request.css' %}" rel="stylesheet">
     <!-- Custom fonts for website-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,7 +59,7 @@
                 </div>
 
                 <!-- Message Field -->
-                <div class="form-group">
+                <div class="form-group" id="message-box">
                     {{ form.message.label_tag }}
                     {{ form.message }}
                     {% if form.message.errors %}
@@ -87,7 +87,7 @@
                         <span class="file-upload-icon">📎</span>
                     </div>
 
-                    <div class="file-upload-container">
+                    {% comment %} <div class="file-upload-container">
                         <input type="file" id="image3" name="image3">
                         <label for="image3" class="file-upload-label">
                             Attach Image 3
@@ -101,7 +101,7 @@
                             Attach Image 4
                         </label>
                         <span class="file-upload-icon">📎</span>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
 
                 <!-- Availability Field -->
@@ -123,7 +123,10 @@
             </form>
         </div>
         <div class="blue-section">
-            <img src="{% static 'images/transparent_logo.png' %}" alt="FixTrackr Logo">
+            <div class="branding-container">
+                <img src="{% static 'images/transparent_logo.png' %}" alt="FixTrackr Logo">
+                <h3> Welcome to Fixtrackr</h3>
+            </div>
         </div>
     </div>
 
@@ -136,19 +139,19 @@
             const fileInputs = document.querySelectorAll('input[type="file"]');
             const fileIcons = document.querySelectorAll('.file-upload-icon');
             const fileLabels = document.querySelectorAll('.file-upload-label');
-
+    
             fileIcons.forEach((icon, index) => {
                 icon.addEventListener('click', function() {
                     fileInputs[index].click();
                 });
             });
-
+    
             fileLabels.forEach((label, index) => {
                 label.addEventListener('click', function() {
                     fileInputs[index].click();
                 });
             });
-
+    
             fileInputs.forEach((input, index) => {
                 input.addEventListener('change', function() {
                     if (this.files.length > 0) {
@@ -163,7 +166,7 @@
                     }
                 });
             });
-
+    
             // Adjust textarea height based on content
             const textareas = document.querySelectorAll('textarea');
             textareas.forEach(function(textarea) {
@@ -173,8 +176,19 @@
                 });
                 textarea.dispatchEvent(new Event('input'));
             });
+    
+            // New code to target the specific textarea for the message box
+            const messageTextarea = document.querySelector('#message-box textarea');
+            if (messageTextarea) {
+                messageTextarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+                messageTextarea.dispatchEvent(new Event('input'));
+            }
         });
     </script>
+    
 </body>
 </html>
 

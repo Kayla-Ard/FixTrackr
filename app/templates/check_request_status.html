@@ -1,28 +1,46 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check Request Status</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for check request status page-->
+    <link href="{% static 'css/check_request_status.css' %}" rel="stylesheet">
+    <!-- Custom fonts for website-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Check Request Status</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="request_number">Request Number:</label>
-        <input type="text" id="request_number" name="request_number">
-        <button type="submit">Check Status</button>
-    </form>
-    {% if maintenance_request %}
-    <h2>Status: {{ maintenance_request.status }}</h2>
-    <p>Request Details:</p>
-    <ul>
-        <li>First Name: {{ maintenance_request.name }}</li>
-        <li>Last Name: {{ maintenance_request.name }}</li>
-        <li>Email: {{ maintenance_request.email }}</li>
-        <li>Address: {{ maintenance_request.address }}</li>
-        <li>Notes: {{ maintenance_request.notes }}</li>
-        <li>Submitted on: {{ maintenance_request.created_at }}</li>
-        <li>Status: {{ maintenance_request.status }}</li>
-    </ul>
-    {% endif %}
+    <div class="main-container">
+        <div class="form-section">
+            <h1>Please enter request # below</h1>
+            <p>When you sent in your request you were given a request #, please check your email.</p>
+            <form method="post" class="status-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="request-number">Request #</label>
+                    <input type="text" id="request-number" name="request-number" placeholder="ABC0001A">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn submit-btn">Submit</button>
+                    <button type="button" class="btn cancel-btn" onclick="location.href='{% url 'tenant_home' %}'">Cancel</button>
+                </div>
+            </form>
+        </div>
+        <div class="blue-section">
+            <div class="branding-container">
+                <img src="{% static 'images/transparent_logo.png' %}" alt="FixTrackr Logo">
+                <h3> Welcome to Fixtrackr</h3>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
