@@ -1,139 +1,119 @@
-
 body {
     font-family: "Open Sans", sans-serif;
-    background-color: #F3F5F9; /* Light grey background for the page */
+    background-color: #F3F5F9;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
 }
 
-.container {
-    width: 636px; /* Fixed width for the form container */
-    padding: 24px; /* Padding inside the container */
-    border-radius: 8px; /* Rounded corners */
-    border: 1px solid #D9D9D9; /* Border color */
-    background: #FFF; /* Background color of the container */
+.main-container {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.form-section {
+    width: 598px;
+    padding: 24px;
+    background: #FFF;
+    border-radius: 8px;
+    border: 1px solid #D9D9D9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.blue-section {
+    width: 598px;
+    height: 100vh;
+    flex-shrink: 0;
+    background-color: #0466C8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blue-section img {
+    width: 149.813px;
+    height: 164.719px;
 }
 
 h1 {
-    color: #333333; /* Dark grey color for the heading */
+    color: #333333;
     font-family: "Work Sans", sans-serif;
     font-size: 24px;
     font-weight: 700;
-    line-height: 28.8px; /* 120% of the font size */
+    line-height: 28.8px;
     letter-spacing: -0.48px;
-    margin-bottom: 24px; /* Space below the heading */
+    margin-bottom: 24px;
 }
 
 .form-group label {
-    color: #5C5D6D; /* Grey color for labels */
+    color: #5C5D6D;
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
     font-weight: 400;
     display: block;
-    margin-bottom: 8px; /* Space below labels */
+    margin-bottom: 8px;
 }
 
-textarea.form-control {
-    width: 100%; /* Adjust to the desired width */
-    min-height: 50px; /* Minimum height */
-    resize: none;
-    overflow: hidden;
-}
-
-textarea {
+textarea.form-control,
+input[type="text"],
+input[type="email"] {
     color: black;
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
     font-weight: 400;
-    box-sizing: border-box; /* Include padding and border in element’s total width and height */
-    padding: 10px; /* Space inside the input */
-    border: 1px solid #D9D9D9; /* Border color for inputs */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #D9D9D9;
     border-radius: 8px;
-    margin-bottom: 20px; /* Space below each input */
+    margin-bottom: 20px;
     background-color: #FFF;
-}
-
-input[type="text"],
-input[type="email"]
-{
-    color:#5C5D6D;
-    font-family: "Open Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    width: 100%; /* Full-width input */
-    padding: 10px; /* Space inside the input */
-    border: 1px solid #D9D9D9; /* Border color for inputs */
-    border-radius: 8px; /* Rounded corners for inputs */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    margin-bottom: 20px; /* Space below each input */
-    background-color: #FFF; /* White background for inputs */
-}
-
-input[type="text"]::placeholder,
-input[type="email"]::placeholder,
-textarea::placeholder {
-    color: #5C5D6D;
-    font-family: "Open Sans", sans-serif; 
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
-textarea.form-control::placeholder {
-    color:#5C5D6D;
-    font-family: "Open Sans", sans-serif;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+    box-sizing: border-box;
 }
 
 input[type="file"] {
-    display: none; /* Hide the default file input */
-    width: 100%; /* Full-width file input */
-    padding: 10px; /* Padding inside the file input */
-    border: 1px solid #D9D9D9; /* Border color for file input */
-    border-radius: 8px; /* Rounded corners for file input */
-    box-sizing: border-box; /* Include padding and border in the element’s total width and height */
-    margin-bottom: 20px; /* Space below the file input */
-    position: relative;
+    display: none;
 }
 
 .file-upload-container {
     position: relative;
-    width: 100%; /* Full-width container */
+    width: 100%;
     display: flex;
     align-items: center;
     background-color: #FFF;
-    border: 1px solid #D9D9D9; /* Border color for file input container */
-    border-radius: 8px; /* Rounded corners for file input container */
-    padding: 10px; /* Space inside the container */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    background-color:#F3F5F9;
+    border: 1px solid #D9D9D9;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #F3F5F9;
 }
 
 .file-upload-label {
     font-family: "Open Sans", sans-serif;
     font-size: 20px;
-    color: #5C5D6D; /* Grey color for label */
-    width: calc(100% - 40px); /* Adjust width to leave space for the icon */
-    text-align: left; /* Align text to the left */
-    margin: 0; /* Remove margin */
-    padding-left: 10px; /* Add padding to the left */
+    color: #5C5D6D;
+    width: calc(100% - 40px);
+    text-align: left;
+    margin: 0;
+    padding-left: 10px;
 }
 
 .file-upload-icon {
     position: absolute;
-    font-size: 24px; /* Icon size */
-    color: black; 
-    right: 10px; /* Space from the right edge */
-    cursor: pointer; /* Pointer cursor on hover */
-    background-size: cover;
-    display: inline-block; /* Ensure the icon is treated as a block element */
+    font-size: 24px;
+    color: black;
+    right: 10px;
+    cursor: pointer;
+    display: inline-block;
     transform: rotate(-90deg);
 }
 
@@ -142,42 +122,74 @@ input[type="file"] {
     border-radius: 25px;
     font-size: 20px;
     padding: 10px 20px;
-    border: none; /* Remove default border */
-    cursor: pointer; /* Pointer cursor on hover */
-    width: 100%; /* Full-width button */
+    border: none;
+    cursor: pointer;
+    width: 100%;
     text-align: center;
     margin-top: 10px;
 }
 
 .submit-btn {
-    background-color: #0466C8; /* Primary blue color for the submit button */
+    background-color: #0466C8;
     color: white;
 }
 
 .cancel-btn {
-    background-color: white; /* White background for the cancel button */
-    color: #0466C8; /* Primary blue color for the text */
-    border: 2px solid #0466C8; /* Border color for the cancel button */
+    background-color: white;
+    color: #0466C8;
+    border: 2px solid #0466C8;
 }
 
 .form-buttons {
     display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 10px; /* Space between buttons */
-    align-items: center; /* Center buttons horizontally */
-    width: 100%; /* Full width for the buttons container */
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
 }
 
 .error {
-    color: red; /* Color for error messages */
-    margin-top: 5px; /* Space above error messages */
-    font-size: 14px; /* Slightly smaller font size for error messages */
+    color: red;
+    margin-top: 5px;
+    font-size: 14px;
 }
 
 .maintenance-form {
     display: flex;
     flex-direction: column;
-    width: 100%; /* Align form elements to the start */
+    width: 100%;
 }
 
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+
+    .form-section {
+        width: 100%;
+        padding: 20px;
+        max-height: none;
+        margin: 0 auto;
+    }
+
+    .blue-section {
+        display: none;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    textarea.form-control,
+    input[type="text"],
+    input[type="email"] {
+        font-size: 18px;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        font-size: 18px;
+    }
+}
 
