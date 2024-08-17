@@ -1,6 +1,17 @@
+/* resets the default styles applied by different browsers */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Open Sans", sans-serif;
     background-color: #F3F5F9;
+    display: -webkit-flex; /* Safari */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,37 +20,73 @@ body {
 }
 
 .main-container {
+    display: -webkit-flex; /* Safari */
     display: flex;
-    max-width: 1200px; /* Adjust the width to ensure it fits well on most screens */
-    width: 100%;
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden; /* Ensure any overflow is hidden */
+    width: 100vw;
+    background-color:#F3F5F9;
+    overflow: hidden;
+    justify-content: space-between;
 }
 
 .form-section {
     width: 636px;
-    padding: 24px;
+    height: 912px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: #FFF;
     border-radius: 8px;
     border: 1px solid #D9D9D9;
-    background: #FFF;
+    display: -webkit-flex; /* Safari */
     display: flex;
+    -webkit-flex-direction: column; /* Safari */
     flex-direction: column;
     justify-content: center;
+    max-height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin-left: auto;
 }
 
 .blue-section {
-    width: 636px;
-    background-color: #0466C8; /* Blue background */
+    width: 598px;
+    height: 100vh;
+    -webkit-flex-shrink: 0; /* Safari */
+    flex-shrink: 0;
+    background-color: #0466C8;
+    display: -webkit-flex; /* Safari */
     display: flex;
+    -webkit-flex-direction: column; /* Safari */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .blue-section img {
-    width: 300px; /* Adjust size based on your logo */
-    height: auto;
+    width: 149.813px;
+    height: 164.719px;
+}
+
+.branding-container {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    -webkit-flex-direction: column; /* Safari */
+    flex-direction: column;
+    align-items: center;
+    width: 242px;
+    height: 280.72px;
+    gap: 40px;
+}
+
+.blue-section h3 {
+    color: white;
+    font-family: "Work Sans", sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin-top: 16px;
+    text-align: center;
 }
 
 h1 {
@@ -47,18 +94,16 @@ h1 {
     font-family: "Work Sans", sans-serif;
     font-size: 24px;
     font-weight: 700;
-    line-height: 28.8px;
-    letter-spacing: -0.48px;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
+    margin-top: 0;
 }
 
 .form-group label {
     color: #5C5D6D;
     font-family: "Open Sans", sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
     display: block;
-    margin-bottom: 8px;
 }
 
 textarea.form-control,
@@ -66,37 +111,50 @@ input[type="text"],
 input[type="email"] {
     color: black;
     font-family: "Open Sans", sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #D9D9D9;
     border-radius: 8px;
-    margin-bottom: 20px;
     background-color: #FFF;
     box-sizing: border-box;
+}
+
+textarea.form-control {
+    min-height: 60px; 
+    resize: vertical; 
 }
 
 input[type="file"] {
     display: none;
 }
 
+#message-box textarea{
+    min-height: 30px; 
+    max-height: 120px; 
+    resize: none; 
+    overflow-y: hidden; 
+    height: auto;
+}
+
 .file-upload-container {
     position: relative;
     width: 100%;
+    display: -webkit-flex; /* Safari */
     display: flex;
     align-items: center;
     background-color: #FFF;
     border: 1px solid #D9D9D9;
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px;
     box-sizing: border-box;
     background-color: #F3F5F9;
 }
 
 .file-upload-label {
     font-family: "Open Sans", sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     color: #5C5D6D;
     width: calc(100% - 40px);
     text-align: left;
@@ -117,13 +175,12 @@ input[type="file"] {
 .submit-btn,
 .cancel-btn {
     border-radius: 25px;
-    font-size: 20px;
-    padding: 10px 20px;
+    font-size: 16px;
     border: none;
     cursor: pointer;
     width: 100%;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .submit-btn {
@@ -138,9 +195,10 @@ input[type="file"] {
 }
 
 .form-buttons {
+    display: -webkit-flex; /* Safari */
     display: flex;
+    -webkit-flex-direction: column; /* Safari */
     flex-direction: column;
-    gap: 10px;
     align-items: center;
     width: 100%;
 }
@@ -148,53 +206,33 @@ input[type="file"] {
 .error {
     color: red;
     margin-top: 5px;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .maintenance-form {
+    display: -webkit-flex; /* Safari */
     display: flex;
+    -webkit-flex-direction: column; /* Safari */
     flex-direction: column;
     width: 100%;
 }
 
 /* Media query for smaller screens */
-@media (max-width: 1200px) {
-    .main-container {
-        max-width: 95%;
-    }
-
-    .form-section {
-        width: 55%; /* Adjust form width relative to screen size */
-    }
-
-    .blue-section {
-        width: 45%; /* Adjust blue section width relative to screen size */
-    }
-}
-
-@media (max-width: 900px) {
-    .form-section {
-        width: 60%; /* Slightly reduce form width */
-    }
-
-    .blue-section {
-        width: 40%; /* Slightly reduce blue section width */
-    }
-}
-
 @media (max-width: 768px) {
     .main-container {
+        -webkit-flex-direction: column; /* Safari */
         flex-direction: column;
     }
 
     .form-section {
         width: 100%;
         padding: 20px;
+        max-height: none;
+        margin: 0 auto;
     }
 
     .blue-section {
-        padding: 20px;
-        display: none; /* Hide the blue section on smaller screens */
+        display: none;
     }
 
     h1 {
@@ -212,8 +250,4 @@ input[type="file"] {
         font-size: 18px;
     }
 }
-
-
-
-
 

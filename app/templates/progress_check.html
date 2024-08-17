@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check Request Status</title>
+    <title>Progress Check</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS for check request status page-->
-    <link href="{% static 'css/check_request_status.css' %}" rel="stylesheet">
+    <link href="{% static 'css/progress_checks.css' %}" rel="stylesheet">
     <!-- Custom fonts for website-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,25 +20,32 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="form-section">
-            <h1>Please enter request # below</h1>
-            <p>When you sent in your request you were given a request #, please check your email.</p>
-            <form method="post" class="status-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="request-number">Request #</label>
-                    <input type="text" id="request-number" name="request-number" placeholder="ABC0001A">
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="btn submit-btn" onclick="location.href='{% url 'progress_check' %}'">Submit</button>
-                    <button type="button" class="btn cancel-btn" onclick="location.href='{% url 'tenant_home' %}'">Cancel</button>
-                </div>
-            </form>
+        <div class="top-section">
+            <h3>Progress Check</h3>
+            <!-- Dynamic request number and property manager details -->
+            <p>Request #{{ maintenance_request.request_number }}</p>
+            <p>Property Manager: {{ maintenance_request.property_manager.name }}</p>
         </div>
+
+        <div class="middle-section">
+            <!-- Displaying request status dynamically -->
+            <p>{{ maintenance_request.status }}</p>
+            <!-- You can add more statuses here based on your application's logic -->
+        </div>
+
+        <div class="bottom-section">
+            <h3>Your Maintenance Request</h3>
+            <!-- Dynamic user and request details -->
+            <p>Full Name: {{ maintenance_request.full_name }}</p>
+            <p>Email: {{ maintenance_request.email }}</p>
+            <p>Subject: {{ maintenance_request.subject }}</p>
+            <p>Message: {{ maintenance_request.message }}</p>
+        </div>
+
         <div class="blue-section">
             <div class="branding-container">
                 <img src="{% static 'images/transparent_logo.png' %}" alt="FixTrackr Logo">
-                <h3> Welcome to Fixtrackr</h3>
+                <h3>Welcome to Fixtrackr</h3>
             </div>
         </div>
     </div>

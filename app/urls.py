@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.tenant_home, name='tenant_home'),
     path('submit-request/', views.submit_request, name='submit_request'),
     path('check-request-status/', views.check_request_status, name='check_request_status'),
+    path('progress-check/', views.progress_check, name='progress_check'),  # Add this line for progress check
 
     # Property Manager API URLs
     path('api/property-managers/', views.property_managers_api, name='property_managers_api'),

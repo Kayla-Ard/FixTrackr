@@ -49,18 +49,21 @@ def submit_request(request):
     return render(request, 'submit_request.html', {'form': form})
 
 
-
-
-
-
-
-
 def check_request_status(request):
     if request.method == 'POST':
         request_number = request.POST.get('request_number')
         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
         return render(request, 'request_status.html', {'maintenance_request': maintenance_request})
     return render(request, 'check_request_status.html')
+
+
+def progress_check(request):
+    if request.method == 'POST':
+        request_number = request.POST.get('request_number')
+        maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
+        return render(request, 'progress_check.html', {'maintenance_request': maintenance_request})
+    return render(request, 'progress_check.html')
+
 
 
 
