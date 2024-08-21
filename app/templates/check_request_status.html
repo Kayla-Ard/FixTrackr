@@ -27,13 +27,14 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="request-number">Request #</label>
-                    <input type="text" id="request-number" name="request-number" placeholder="ABC0001A">
+                    <input type="text" id="request-number" name="request_number" placeholder="ABC0001">
                 </div>
                 <div class="form-buttons">
-                    <button type="submit" class="btn submit-btn" onclick="location.href='{% url 'progress_check' %}'">Submit</button>
+                    <button type="submit" class="btn submit-btn">Submit</button>
                     <button type="button" class="btn cancel-btn" onclick="location.href='{% url 'tenant_home' %}'">Cancel</button>
                 </div>
             </form>
+            
         </div>
         <div class="blue-section">
             <div class="branding-container">

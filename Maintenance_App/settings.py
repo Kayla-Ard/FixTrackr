@@ -83,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processors.static_version',
             ],
         },
     },
@@ -130,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
 
@@ -150,7 +151,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
-
+STATIC_VERSION = '1.0'
 
 # handles media files (such as images)
 
@@ -171,5 +172,3 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 # Maximum size (in bytes) for the data upload request
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
-# Temporarily trying this to see if the file size is the problem 
-# FILE_UPLOAD_MAX_MEMORY_SIZE = None  # No limit

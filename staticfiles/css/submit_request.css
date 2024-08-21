@@ -194,6 +194,15 @@ input[type="file"] {
     border: 2px solid #0466C8;
 }
 
+.submit-btn:hover{
+    color: white; 
+    background-color: #005BBD;
+}
+
+.cancel-btn:hover {
+    color: #0466C8;
+}
+
 .form-buttons {
     display: -webkit-flex; /* Safari */
     display: flex;

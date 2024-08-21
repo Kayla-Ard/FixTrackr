@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # We create our models(tables) here.
 
@@ -15,6 +16,7 @@ class MaintenanceRequest(models.Model):
     email = models.EmailField()
     subject = models.CharField(max_length=200)
     message = models.TextField()
+    date_sent = models.DateTimeField(default=timezone.now)
     image1 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image1')
     image2 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image2')
     image3 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image3')

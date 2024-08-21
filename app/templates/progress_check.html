@@ -1,4 +1,6 @@
 {% load static %}
+{% load tz %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +11,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS for check request status page-->
-    <link href="{% static 'css/progress_checks.css' %}" rel="stylesheet">
+    <link href="{% static 'css/progress_check.css' %}?v={{ STATIC_VERSION }}" rel="stylesheet">
     <!-- Custom fonts for website-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,26 +22,81 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="top-section">
-            <h3>Progress Check</h3>
-            <!-- Dynamic request number and property manager details -->
-            <p>Request #{{ maintenance_request.request_number }}</p>
-            <p>Property Manager: {{ maintenance_request.property_manager.name }}</p>
-        </div>
+            <div class="left-section">
+                <div class="nav-section">
+                    <a href="{% url 'check_request_status' %}" class="back-arrow">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 19L8 12L15 5" stroke="#0466C8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="{% url 'tenant_home' %}" class="close-button">&times;</a>
+                </div>
 
-        <div class="middle-section">
-            <!-- Displaying request status dynamically -->
-            <p>{{ maintenance_request.status }}</p>
-            <!-- You can add more statuses here based on your application's logic -->
-        </div>
+            <div class="top-section">
+                <h3>Progress Check</h3>
+                <p>Request #{{ maintenance_request.request_number }}</p>
+                <p>Property Manager: {{ maintenance_request.property_manager.name }}</p>
+            </div>
 
-        <div class="bottom-section">
-            <h3>Your Maintenance Request</h3>
-            <!-- Dynamic user and request details -->
-            <p>Full Name: {{ maintenance_request.full_name }}</p>
-            <p>Email: {{ maintenance_request.email }}</p>
-            <p>Subject: {{ maintenance_request.subject }}</p>
-            <p>Message: {{ maintenance_request.message }}</p>
+            <div class="middle-section">
+                <div class="status-container">
+                    {% for status in statuses %}
+                    <div class="status-item">
+                        <span class="status-label {% if forloop.counter0 <= current_index %}active{% endif %}">
+                            {{ status|safe }}  <!-- safe filter is used to render HTML tags in Django template -->
+                        </span>
+                        <div class="progress-bar {% if forloop.counter0 <= current_index %}active{% endif %}"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+    
+            {% comment %} <div class="middle-section">
+                <div class="status-container">
+                    <div class="status-item">
+                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Sent' %}700{% else %}400{% endif %};">Request<br>Sent</span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {% if maintenance_request.status in 'Request Sent,Request Read,Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Sent' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Read' %}700{% else %}400{% endif %};">Request<br>Read</span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {% if maintenance_request.status in 'Request Read,Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Read' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Contractor Called' %}700{% else %}400{% endif %};">Contractor<br>Called</span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {% if maintenance_request.status in 'Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Contractor Called' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Appointment Set' %}700{% else %}400{% endif %};">Appointment<br>Set</span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {% if maintenance_request.status in 'Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Appointment Set' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Complete' %}700{% else %}400{% endif %};">Request<br>Complete</span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {% if maintenance_request.status == 'Request Complete' %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Complete' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div> {% endcomment %}
+            
+            <div class="bottom-section">
+                <h3>Your Maintenance Request</h3>
+                <p>Sent: {{ maintenance_request.date_sent|localtime }}</p>
+                <p>Full Name: {{ maintenance_request.full_name }}</p>
+                <p>Email: {{ maintenance_request.email }}</p>
+                <p>Subject: {{ maintenance_request.subject }}</p>
+                <p>Message: {{ maintenance_request.message }}</p>
+            </div>            
+            
         </div>
 
         <div class="blue-section">

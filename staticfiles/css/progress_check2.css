@@ -30,39 +30,8 @@ body {
     width: 636px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
     padding: 24px;
-    justify-content: center;
-    box-sizing: border-box;
-    margin-left: auto; 
-    margin-right: auto;
-}
-
-.nav-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.close-button {
-    font-size: 48px;
-    color: #0466C8;
-    text-decoration: none;
-}
-
-.back-arrow svg {
-    width: 40px;
-    height: 48px;
-    cursor: pointer;
-}
-
-.close-button:hover {
-    text-decoration: none;
-    cursor: pointer;
 }
 
 .top-section {
@@ -70,16 +39,6 @@ body {
     border-radius: 8px;
     border: 1px solid #D9D9D9;
     padding: 16px;
-    font-size: 20px;
-    font-family: "Open Sans";
-    color:#333333;
-}
-
-.top-section h3 {
-    margin-bottom: 16px;
-    font-weight: 600px;
-    font-family: "Work Sans";
-    font-size: 24px;
 }
 
 .middle-section {
@@ -89,73 +48,39 @@ body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    
-    height: 136px;
-    width: 100%;
+    gap: 8px;
 }
 
 .status-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    gap: 10px;
-}
-
-.status-item {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    flex-basis: 0;
-    flex-grow: 1; 
-    text-align: center; 
-    width: 98.4px;
 }
 
 .status-label {
-    font-size: 16px;
-    color: #333333;
-    text-align: center;
-    font-weight: 400;
-    font-family: "Open Sans";
+    font-size: 14px;
+    color: #5C5D6D;
 }
 
 .status-label.active {
-    font-weight: 700 !important;
-    color: #333333;
+    font-weight: bold;
+    color: #333;
 }
 
 .progress-bar {
     width: 100%;
-    height: 20px;
-    background-color: #CCCCCC; 
-    position: relative;
+    height: 6px;
+    background-color: #E5E5E5;
+    border-radius: 3px;
     margin-top: 8px;
-    display: flex;
-    gap:24px
+    position: relative;
 }
 
-.progress-bar.active {
-    background-color: #0466C8; /* Active progress bar color */
-}
-
-.progress {
-    
+.progress-bar .progress {
+    width: 50%; /* Adjust this width to match the current progress */
     height: 100%;
-    position: absolute;
-    transition: width 0.4s ease; /* Smooth transition for progress bar fill */
-    background-color: inherit; /* Inherit the color from the progress bar */
-}
-
-.status-item:first-child .progress-bar {
-    border-top-left-radius: 15px; /* Round top left corner for the first item */
-    border-bottom-left-radius: 15px; /* Round bottom left corner for the first item */
-}
-
-.status-item:last-child .progress-bar {
-    border-top-right-radius: 15px; /* Round top right corner for the last item */
-    border-bottom-right-radius: 15px; /* Round bottom right corner for the last item */
+    background-color: #0466C8;
+    border-radius: 3px;
 }
 
 .bottom-section {
@@ -167,18 +92,12 @@ body {
 
 .bottom-section h3 {
     margin-bottom: 12px;
-    color: #333333;
-    font-family: "Work Sans";
-    font-weight: 600px;
-    font-size: 24px;
 }
 
 .bottom-section p {
     margin-bottom: 8px;
     color: #333333;
-    font-size: 20px !important;
-    font-weight: 400px;
-    font-family: "Open Sans";
+    font-size: 14px;
 }
 
 .blue-section {

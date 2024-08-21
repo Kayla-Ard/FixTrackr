@@ -30,7 +30,7 @@ body {
     width: 636px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
     padding: 24px;
     justify-content: center;
     box-sizing: border-box;
@@ -48,15 +48,14 @@ body {
     padding-right: 10px;
 }
 
-.close-button {
+.back-arrow, .close-button {
     font-size: 48px;
     color: #0466C8;
     text-decoration: none;
 }
 
 .back-arrow svg {
-    width: 40px;
-    height: 48px;
+    font-size: 48px;
     cursor: pointer;
 }
 
@@ -89,34 +88,73 @@ body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    
-    height: 136px;
-    width: 100%;
 }
 
 .status-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    gap: 10px;
+    align-items: center;
+}
+
+.progress-bar-1 {
+    width: 100%; 
+    height: 20px; 
+    background-color:  #0466C8 !important;
+    position: relative;
+    border-top-left-radius: 15px; /* Round top left corner */
+    border-bottom-left-radius: 15px; /* Round bottom left corner */
+}
+
+.progress-bar-2 {
+    width: 100%; 
+    height: 20px; 
+    background-color:  #0466C8;
+    position: relative;
+}
+
+.progress-bar-3 {
+    width: 100%; 
+    height: 20px; 
+    background-color:  #0466C8;
+    position: relative;
+}
+
+.progress-bar-4 {
+    width: 100%; 
+    height: 20px; 
+    background-color: #CCCCCC;
+    position: relative;
+}
+
+.progress-bar-5 {
+    width: 100%; 
+    height: 20px; 
+    background-color: #CCCCCC;
+    position: relative;
+    border-top-right-radius: 15px; /* Round top right corner */
+    border-bottom-right-radius: 15px; /* Round bottom right corner */
+}
+
+.progress {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    
 }
 
 .status-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    flex-basis: 0;
-    flex-grow: 1; 
-    text-align: center; 
-    width: 98.4px;
+    gap: 4px;
+    width: 100px;
 }
 
 .status-label {
     font-size: 16px;
-    color: #333333;
+    color:#333333;
     text-align: center;
+    display: inline-block;
     font-weight: 400;
     font-family: "Open Sans";
 }
@@ -124,38 +162,6 @@ body {
 .status-label.active {
     font-weight: 700 !important;
     color: #333333;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 20px;
-    background-color: #CCCCCC; 
-    position: relative;
-    margin-top: 8px;
-    display: flex;
-    gap:24px
-}
-
-.progress-bar.active {
-    background-color: #0466C8; /* Active progress bar color */
-}
-
-.progress {
-    
-    height: 100%;
-    position: absolute;
-    transition: width 0.4s ease; /* Smooth transition for progress bar fill */
-    background-color: inherit; /* Inherit the color from the progress bar */
-}
-
-.status-item:first-child .progress-bar {
-    border-top-left-radius: 15px; /* Round top left corner for the first item */
-    border-bottom-left-radius: 15px; /* Round bottom left corner for the first item */
-}
-
-.status-item:last-child .progress-bar {
-    border-top-right-radius: 15px; /* Round top right corner for the last item */
-    border-bottom-right-radius: 15px; /* Round bottom right corner for the last item */
 }
 
 .bottom-section {

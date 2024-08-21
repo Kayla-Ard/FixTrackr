@@ -6,11 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .forms import MaintenanceRequestForm
 import uuid
 from .serializers import MaintenanceRequestSerializer, PropertyManagerSerializer
 from rest_framework.views import APIView
+from django.utils import timezone
 
 # Tenant related HTML Views
 
@@ -27,6 +28,7 @@ def submit_request(request):
         form = MaintenanceRequestForm(request.POST)
         if form.is_valid():
             maintenance_request = form.save(commit=False)
+            maintenance_request.date_sent = timezone.now()
             maintenance_request.request_number = generate_request_number()
             maintenance_request.save()
 
@@ -52,17 +54,51 @@ def submit_request(request):
 def check_request_status(request):
     if request.method == 'POST':
         request_number = request.POST.get('request_number')
-        maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
-        return render(request, 'request_status.html', {'maintenance_request': maintenance_request})
+        return redirect('progress_check', request_number=request_number)
     return render(request, 'check_request_status.html')
 
 
-def progress_check(request):
-    if request.method == 'POST':
-        request_number = request.POST.get('request_number')
+# def progress_check(request):
+#     if request.method == 'POST':
+#         request_number = request.POST.get('request_number')
+#         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
+#         return render(request, 'progress_check.html', {'maintenance_request': maintenance_request})
+#     return render(request, 'progress_check.html')
+
+def progress_check(request, request_number=None):
+    if request_number:
         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
-        return render(request, 'progress_check.html', {'maintenance_request': maintenance_request})
-    return render(request, 'progress_check.html')
+    else:
+        # Mock data for development purposes
+        maintenance_request = {
+            'request_number': 'ABC0001',
+            'property_manager': {'name': 'John Doe'},
+            'status': 'Request Sent',  
+            'full_name': 'Jane Smith',
+            'email': 'jane@example.com',
+            'subject': 'Leaky faucet',
+            'message': 'The kitchen faucet has been leaking for a week.',
+        }
+
+    statuses = ['Request<br>Sent', 'Request<br>Read', 'Contractor<br>Called', 'Appointment<br>Set', 'Request<br>Complete']
+
+
+    # Safely handle cases where the status might not be in the list
+    if maintenance_request.status in statuses:
+        current_index = statuses.index(maintenance_request.status)
+    else:
+        current_index = -1  
+
+    return render(request, 'progress_check.html', {
+        'maintenance_request': maintenance_request,
+        'statuses': statuses,
+        'current_index': current_index,
+    })
+
+
+
+
+
 
 
 
