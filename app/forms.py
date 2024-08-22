@@ -22,25 +22,10 @@ class MaintenanceRequestForm(forms.ModelForm):
         label='Message',
         widget=forms.Textarea(attrs={'placeholder': "The pipe connected to our toilet is starting to drip. I tried tightening it with a wrench but it didn't work. We need someone to come in ASAP.", 'class': 'form-control'})
         )
-    image1 = forms.FileField(
-        widget=CustomClearableFileInput(),
+    images = forms.FileField(
+        widget=CustomClearableFileInput(attrs={'multiple': True}),
         required=False,
-        label="Attach Image 1",
-    )
-    image2 = forms.FileField(
-        widget=CustomClearableFileInput(),
-        required=False,
-        label="Attach Image 2",
-    )
-    image3 = forms.FileField(
-        widget=CustomClearableFileInput(),
-        required=False,
-        label="Attach Image 3",
-    )
-    image4 = forms.FileField(
-        widget=CustomClearableFileInput(),
-        required=False,
-        label="Attach Image 4",
+        label="Attach Images",
     )
     availability = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Monday - Friday 3PM - 6PM'}),
@@ -49,4 +34,4 @@ class MaintenanceRequestForm(forms.ModelForm):
 
     class Meta:
         model = MaintenanceRequest
-        fields = ['full_name', 'email', 'subject', 'message', 'image1', 'image2', 'image3', 'image4', 'availability']
+        fields = ['full_name', 'email', 'subject', 'message', 'images', 'availability']

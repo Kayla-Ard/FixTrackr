@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-((2ezkd=*icqmt2c&@q%037wahak5u%f#eny*@nmjl1wa%i7))'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -98,11 +98,11 @@ WSGI_APPLICATION = 'Maintenance_App.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fixtrackr_db',
-        'USER': 'superuser',
-        'PASSWORD': 'Hammond45!',
-        'HOST': 'localhost',
-        'PORT': '5433',
+        'NAME': os.getenv('DATABASE_NAME', 'fixtrackr_db'),
+        'USER': os.getenv('DATABASE_USER', 'superuser'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'yXlxAeUDWk4Crxi2x8eAy30cfBzdxli3'),
+        'HOST': os.getenv('DATABASE_HOST', 'dpg-cr3q41l6l47c73a9njsg-a.oregon-postgres.render.com'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
 

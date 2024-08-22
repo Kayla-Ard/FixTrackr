@@ -12,6 +12,9 @@ import uuid
 from .serializers import MaintenanceRequestSerializer, PropertyManagerSerializer
 from rest_framework.views import APIView
 from django.utils import timezone
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 # Tenant related HTML Views
 
@@ -32,16 +35,11 @@ def submit_request(request):
             maintenance_request.request_number = generate_request_number()
             maintenance_request.save()
 
-            # Process each image field separately
-            image_fields = ['image1', 'image2', 'image3', 'image4']
-            for image_field in image_fields:
-                image_file = request.FILES.get(image_field)
-                if image_file:
-                    image = Image(file=image_file)
-                    image.save()
-                    setattr(maintenance_request, image_field, image)
-
-            maintenance_request.save()
+            # Process multiple image files
+            for image_file in request.FILES.getlist('images'):
+                image = Image(file=image_file, maintenance_request=maintenance_request)
+                image.save()
+                
             return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
         else:
             print(form.errors)  # Output errors for inspection
@@ -57,13 +55,6 @@ def check_request_status(request):
         return redirect('progress_check', request_number=request_number)
     return render(request, 'check_request_status.html')
 
-
-# def progress_check(request):
-#     if request.method == 'POST':
-#         request_number = request.POST.get('request_number')
-#         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
-#         return render(request, 'progress_check.html', {'maintenance_request': maintenance_request})
-#     return render(request, 'progress_check.html')
 
 def progress_check(request, request_number=None):
     if request_number:
@@ -103,62 +94,94 @@ def progress_check(request, request_number=None):
 
 
 
-# Mobile App/ RESTful API endpoint
+# PWA RESTful API endpoints
 
+# Property Manager Registration
+@api_view(['POST'])
+def register_property_manager(request):
+    data = request.data
+
+    # Optional: You can add a password confirmation check if needed
+    if data.get('password') != data.get('confirm_password'):
+        return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.create_user(
+            email=data['email'],
+            password=data['password'],
+            first_name=data['firstName'],
+            last_name=data['lastName']
+        )
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# List properties
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_properties(request):
+    properties = Property_Manager.objects.filter(user=request.user)
+    serializer = PropertyManagerSerializer(properties, many=True)
+    return Response(serializer.data)
+
+
+# Create properties 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def submit_request_api(request):
-    serializer = MaintenanceRequestSerializer(data=request.data)
+def create_property(request):
+    serializer = PropertyManagerSerializer(data=request.data)
     if serializer.is_valid():
-        maintenance_request = serializer.save()
-        maintenance_request.request_number = generate_request_number()
-        maintenance_request.save()
-
-        # Handle file uploads if included in the request
-        files = request.FILES.getlist('images')
-        for file in files:
-            image = Image(file=file, maintenance_request=maintenance_request)
-            image.save()
-
-        return Response({'request_number': maintenance_request.request_number}, status=status.HTTP_201_CREATED)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-def check_status_api(request):
-    request_number = request.query_params.get('request_number', None)
-    if request_number:
-        try:
-            maintenance_request = MaintenanceRequest.objects.get(request_number=request_number)
-            serializer = MaintenanceRequestSerializer(maintenance_request)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except MaintenanceRequest.DoesNotExist:
-            return Response({'error': 'Request not found'}, status=status.HTTP_404_NOT_FOUND)
-    return Response({'error': 'Request number is required'}, status=status.HTTP_400_BAD_REQUEST)
+# Update Properties
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_property(request, id):
+    property = get_object_or_404(Property_Manager, id=id, user=request.user)
+    serializer = PropertyManagerSerializer(property, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Delete Properties
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_property(request, id):
+    property = get_object_or_404(Property_Manager, id=id, user=request.user)
+    property.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# List maintenance request
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def api_get_requests(request):
-    requests = MaintenanceRequest.objects.all()
+def list_maintenance_requests(request):
+    requests = MaintenanceRequest.objects.filter(property_manager__user=request.user)
     serializer = MaintenanceRequestSerializer(requests, many=True)
     return Response(serializer.data)
 
 
 
-# Property manager API endpoints
-@api_view(['GET'])
+# Update maintenance request
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
-def property_managers_api(request):
-    property_managers = Property_Manager.objects.all()
-    serializer = PropertyManagerSerializer(property_managers, many=True)
-    return Response(serializer.data)
+def update_request_status(request, id):
+    maintenance_request = get_object_or_404(MaintenanceRequest, id=id, property_manager__user=request.user)
+    maintenance_request.status = request.data.get('status', maintenance_request.status)
+    maintenance_request.save()
+    return Response({'status': maintenance_request.status})
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def property_manager_details_api(request, id):
-    property_manager = get_object_or_404(Property_Manager, id=id)
-    serializer = PropertyManagerSerializer(property_manager)
-    return Response(serializer.data)
+
 
 
 
@@ -166,11 +189,11 @@ def property_manager_details_api(request, id):
 
 # If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:
 
-class ExampleProtectedView(APIView):
-    permission_classes = [IsAuthenticated]
+# class ExampleProtectedView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return Response({'message': 'You have access to this view!'})
+#     def get(self, request):
+#         return Response({'message': 'You have access to this view!'})
     
 # Testing JWT Authentication
 # We can test JWT authentication using Postman:

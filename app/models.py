@@ -17,15 +17,12 @@ class MaintenanceRequest(models.Model):
     subject = models.CharField(max_length=200)
     message = models.TextField()
     date_sent = models.DateTimeField(default=timezone.now)
-    image1 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image1')
-    image2 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image2')
-    image3 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image3')
-    image4 = models.ForeignKey('Image', blank=True, null=True, on_delete=models.SET_NULL, related_name='image4')
     availability = models.CharField(max_length=255, blank=True, null=True)
     request_number = models.CharField(max_length=20, unique=True)
     status = models.CharField(max_length=50, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Image(models.Model):
+    maintenance_request = models.ForeignKey(MaintenanceRequest, related_name='images', on_delete=models.CASCADE, null=True, blank=True)
     file = models.ImageField(upload_to='maintenance_images/')
     created_at = models.DateTimeField(auto_now_add=True)

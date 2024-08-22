@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    
     # Tenant URLs
     path('', views.tenant_home, name='tenant_home'),
     path('submit-request/', views.submit_request, name='submit_request'),
@@ -10,14 +11,15 @@ urlpatterns = [
     path('progress-check/<str:request_number>/', views.progress_check, name='progress_check'), 
 
     # Property Manager API URLs
-    path('api/property-managers/', views.property_managers_api, name='property_managers_api'),
-    path('api/property-manager-details/<int:id>/', views.property_manager_details_api, name='property_manager_details_api'),
+    path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
+    path('api/properties/', views.list_properties, name='list_properties'),
+    path('api/properties/create/', views.create_property, name='create_property'),
+    path('api/properties/update/<int:id>/', views.update_property, name='update_property'),
+    path('api/properties/delete/<int:id>/', views.delete_property, name='delete_property'),
+    path('api/maintenance-requests/', views.list_maintenance_requests, name='list_maintenance_requests'),
+    path('api/maintenance-requests/update-status/<int:id>/', views.update_request_status, name='update_request_status'),
 
-    # Maintenance Request API URLs
-    path('api/submit-request/', views.submit_request_api, name='submit_request_api'),
-    path('api/check-status/', views.check_status_api, name='check_status_api'),
-    path('api/requests/', views.api_get_requests, name='api_get_requests'),
+]
 
     # Example protected view URL
-    path('api/protected/', views.ExampleProtectedView.as_view(), name='example_protected_view'),
-]
+    # path('api/protected/', views.ExampleProtectedView.as_view(), name='example_protected_view'),
