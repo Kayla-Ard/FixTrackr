@@ -190,7 +190,7 @@ p {
     font-family: "Work Sans", sans-serif;
     text-align: center;
     width: 242px;
-    font-size: 25px;
+    font-size: 24px;
 }
 
 /* Media query for smaller screens */
@@ -215,13 +215,26 @@ p {
     }
 
     p,
-    .form-group label,
+    .form-group label {
+        font-size: 16px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
     .form-group input[type="text"] {
-        font-size: 18px;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .sub-p {
+        font-size: 16px;
+        margin-bottom: 10px;
     }
 
     .submit-btn,
     .cancel-btn {
-        font-size: 18px;
+        font-size: 16px;
     }
 }

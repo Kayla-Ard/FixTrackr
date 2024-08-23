@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse
 from django.template import loader
-from .models import Property_Manager, MaintenanceRequest, Image
+from .models import Property_Manager, MaintenanceRequest, Image, Tenant
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -14,7 +14,8 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-
+import logging
+from django.contrib.auth import authenticate
 
 # Tenant related HTML Views
 
@@ -27,26 +28,31 @@ def generate_request_number():
 
 
 def submit_request(request):
-    if request.method == 'POST':
-        form = MaintenanceRequestForm(request.POST)
-        if form.is_valid():
-            maintenance_request = form.save(commit=False)
-            maintenance_request.date_sent = timezone.now()
-            maintenance_request.request_number = generate_request_number()
-            maintenance_request.save()
+    try:
+        if request.method == 'POST':
+            form = MaintenanceRequestForm(request.POST, request.FILES)
+            if form.is_valid():
+                maintenance_request = form.save(commit=False)
+                maintenance_request.date_sent = timezone.now()
+                maintenance_request.request_number = generate_request_number()
+                maintenance_request.save()
 
-            # Process multiple image files
-            for image_file in request.FILES.getlist('images'):
-                image = Image(file=image_file, maintenance_request=maintenance_request)
-                image.save()
-                
-            return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
+                # Process multiple image files
+                for image_file in request.FILES.getlist('images'):
+                    image = Image(file=image_file, maintenance_request=maintenance_request)
+                    image.save()
+                    
+                return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
+            else:
+                print(form.errors)  # Output errors for inspection
+                return render(request, 'submit_request.html', {'form': form})
         else:
-            print(form.errors)  # Output errors for inspection
-            return render(request, 'submit_request.html', {'form': form})
-    else:
-        form = MaintenanceRequestForm()
-    return render(request, 'submit_request.html', {'form': form})
+            form = MaintenanceRequestForm()
+        return render(request, 'submit_request.html', {'form': form})
+    except Exception as e:
+            logging.error(f"Error occurred: {e}")
+            return render(request, 'submit_request.html', {'form': form}) 
+
 
 
 def check_request_status(request):
@@ -109,29 +115,91 @@ def progress_check(request, request_number=None):
 
 # PWA RESTful API endpoints
 
-# Property Manager Registration
+# Property manager register endpoint
 @api_view(['POST'])
 def register_property_manager(request):
     data = request.data
 
-    # Optional: You can add a password confirmation check if needed
+    # Validate password match
     if data.get('password') != data.get('confirm_password'):
         return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+        # Validate email uniqueness
+        if User.objects.filter(email=data['email']).exists():
+            return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create user and property manager
         user = User.objects.create_user(
             email=data['email'],
             password=data['password'],
             first_name=data['firstName'],
             last_name=data['lastName']
         )
+
+        property_manager = Property_Manager.objects.create(
+            first_name=data['firstName'],
+            last_name=data['lastName'],
+            email=data['email'],
+            phone=data.get('phone')
+        )
+
+        # Create tenant records if provided
+        tenants = data.get('tenants', [])
+        for tenant in tenants:
+            Tenant.objects.create(
+                full_name=tenant['full_name'],
+                email=tenant['email'],
+                property_manager=property_manager
+            )
+
+        # Generate tokens
         refresh = RefreshToken.for_user(user)
+        access_token = refresh.access_token
+
         return Response({
             'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'access': str(access_token),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+            }
         }, status=status.HTTP_201_CREATED)
+
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+# Property manager login endpoint
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    user = authenticate(request, username=email, password=password)
+
+    if user is not None:
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = refresh.access_token
+
+        return Response({
+            'refresh': str(refresh),
+            'access': str(access_token),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+            }
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # List properties

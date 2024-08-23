@@ -22,12 +22,13 @@
     <div class="main-container">
         <div class="form-section">
             <h1>Please fill out maintenance request</h1>
+            <p class="sub-p">All fields are required. Images are optional.</p>
             <form method="post" enctype="multipart/form-data" class="maintenance-form">
                 {% csrf_token %}
                 
                 <!-- Full Name Field -->
                 <div class="form-group">
-                    {{ form.full_name.label_tag }}
+                    <label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
                     {{ form.full_name }}
                     {% if form.full_name.errors %}
                         <div class="error">
@@ -38,7 +39,8 @@
 
                 <!-- Email Field -->
                 <div class="form-group">
-                    {{ form.email.label_tag }}
+                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label> <!-- Custom label rendering without colon -->
+                    <p>Please use primary tenant's email as this will make sure your request goes to your property manager.</p>
                     {{ form.email }}
                     {% if form.email.errors %}
                         <div class="error">
@@ -49,7 +51,7 @@
 
                 <!-- Subject Field -->
                 <div class="form-group">
-                    {{ form.subject.label_tag }}
+                    <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label> <!-- Custom label rendering without colon -->
                     {{ form.subject }}
                     {% if form.subject.errors %}
                         <div class="error">
@@ -60,8 +62,9 @@
 
                 <!-- Message Field -->
                 <div class="form-group" id="message-box">
-                    {{ form.message.label_tag }}
-                    {{ form.message }}
+                    <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label> <!-- Custom label rendering without colon -->
+                    {{ form.message }} 
+                    <p class="character-limit">500 Characters Max</p> 
                     {% if form.message.errors %}
                         <div class="error">
                             {{ form.message.errors }}
@@ -83,7 +86,8 @@
 
                 <!-- Availability Field -->
                 <div class="form-group">
-                    {{ form.availability.label_tag }}
+                    <label for="{{ form.availability.id_for_label }}">{{ form.availability.label }}</label> <!-- Custom label rendering without colon -->
+                    <p>Please let property manager know when you are available for a contractor to come over and do repairs.</p>
                     {{ form.availability }}
                     {% if form.availability.errors %}
                         <div class="error">
@@ -113,6 +117,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const formSection = document.querySelector('.form-section');
+            
+            if (formSection) {
+                formSection.scrollTop = 0; // Ensure the form content starts at the top
+            }
+    
             const fileInputs = document.querySelectorAll('input[type="file"]');
             const fileIcons = document.querySelectorAll('.file-upload-icon');
             const fileLabels = document.querySelectorAll('.file-upload-label');
@@ -163,9 +173,17 @@
                 });
                 messageTextarea.dispatchEvent(new Event('input'));
             }
+    
+            // Real-time character count for the message box
+            const charLimitMessage = document.querySelector(".character-limit");
+            if (messageTextarea && charLimitMessage) {
+                messageTextarea.addEventListener("input", function() {
+                    const remaining = 500 - messageTextarea.value.length;
+                    charLimitMessage.textContent = `${remaining} characters remaining`;
+                });
+            } 
         });
     </script>
-    
 </body>
 </html>
 

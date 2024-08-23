@@ -3,14 +3,28 @@ from django.utils import timezone
 
 # We create our models(tables) here.
 
+# For when the property manager is registering 
 class Property_Manager(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(null=True)
-    phone = models.IntegerField(null=True)
-    
-    
+    email = models.EmailField(unique=True)  # Ensure that the email is unique
+    phone = models.CharField(max_length=15, null=True)  
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+# For when the property manager is registering the tenant - connects them with email 
+class Tenant(models.Model):
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    property_manager = models.ForeignKey(Property_Manager, related_name='tenants', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.full_name
+
+    
+# Maintenance request form on the tenant website 
 class MaintenanceRequest(models.Model):
     full_name = models.CharField(max_length=255)
     email = models.EmailField()

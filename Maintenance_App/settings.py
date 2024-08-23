@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 # REST framework settings
@@ -70,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'Maintenance_App.urls'
@@ -174,3 +177,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 # Maximum size (in bytes) for the data upload request
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # frontend's URL
+]
