@@ -1,3 +1,14 @@
+/* resets the default styles applied by different browsers */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
 body {
     font-family: "Open Sans", sans-serif;
     background-color: #F3F5F9;
@@ -18,7 +29,6 @@ body {
 
 .form-section {
     width: 636px;
-    height: 420px;
     padding: 24px; 
     background: #FFF;
     border-radius: 8px; 
@@ -35,21 +45,30 @@ body {
 h1 {
     width: 588px;
     font-family: "Work Sans", sans-serif;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 600;
     line-height: 28.15px;
     text-align: left;
     margin: 0;
+    color: #333333;
 }
 
 p {
     width: 588px;
-    font-family: "Open Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
+    font-family: "Work Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
     line-height: 27.24px;
     text-align: left;
     margin: 0;
+    color: #333333;
+}
+
+.sub-p {
+    font-size: 20px;
+    font-weight: 400;
+    font-family: "Open Sans", sans-serif;
+    color: #333333;
 }
 
 .form-group {
@@ -81,16 +100,23 @@ p {
     box-sizing: border-box;
 }
 
+#request-number::placeholder {
+    color: #5C5D6D;
+    opacity: 1; 
+}
+
 .submit-btn,
 .cancel-btn {
     border-radius: 25px;
-    font-size: 18px;
+    font-size: 16px;
     padding: 8px 16px;
     border: none;
     cursor: pointer;
     width: 100%;
     text-align: center;
     margin-top: 10px;
+    font-weight: 400;
+    height: 54px;
 }
 
 .submit-btn {
@@ -104,6 +130,15 @@ p {
     border: 2px solid #0466C8;
 }
 
+.submit-btn:hover {
+    background-color: #005BBD;
+    color: white;
+}
+
+.cancel-btn:hover {
+    color: #0466C8;
+}
+
 .form-buttons {
     display: flex;
     flex-direction: column;
@@ -112,10 +147,11 @@ p {
     width: 100%;
 }
 
-.error {
-    color: red;
+.error-message {
+    color: #dc3545;
     margin-top: 5px;
-    font-size: 12px;
+    font-size: 16px;
+    font-weight: 400;
 }
 
 .maintenance-form {
@@ -152,10 +188,9 @@ p {
 .blue-section h3 {
     color: white;
     font-family: "Work Sans", sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    margin-top: 16px;
     text-align: center;
+    width: 242px;
+    font-size: 24px;
 }
 
 /* Media query for smaller screens */

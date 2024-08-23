@@ -55,20 +55,17 @@ h2 {
     margin-bottom: 32px;
 }
 
-.request-number, .manager-name {
+.request-number {
     font-size: 24px;
     font-weight: 600;
     margin: 8px 0;
+    margin-bottom: 32px;
 }
 
 .request-number {
     color: #333333;
 }
 
-.manager-name {
-    color: #5C5D6D;
-    margin-bottom: 32px;
-}
 
 .thank-you-message {
     font-size: 20px;

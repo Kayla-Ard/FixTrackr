@@ -21,19 +21,24 @@
 <body>
     <div class="main-container">
         <div class="form-section">
-            <h1>Please enter request # below</h1>
-            <p>When you sent in your request you were given a request #, please check your email.</p>
+            <h1>Progress Check</h1>
+            <p>Please enter request # below</p>
+            <p class="sub-p">Enter the request number from your confirmation email.</p>
             <form method="post" class="status-form">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="request-number">Request #</label>
-                    <input type="text" id="request-number" name="request_number" placeholder="ABC0001">
+                    <label for="request-number">Request Number</label>
+                    <input type="text" id="request-number" name="request_number" placeholder="ABC0001" value="{{ request.POST.request_number }}">
+                    {% if error_message %}
+                        <p class="error-message">{{ error_message }}</p>
+                    {% endif %}
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="btn submit-btn">Submit</button>
                     <button type="button" class="btn cancel-btn" onclick="location.href='{% url 'tenant_home' %}'">Cancel</button>
                 </div>
             </form>
+            
             
         </div>
         <div class="blue-section">

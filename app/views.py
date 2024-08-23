@@ -50,10 +50,25 @@ def submit_request(request):
 
 
 def check_request_status(request):
+    error_message = None  # Initialize the error message as None
+
     if request.method == 'POST':
         request_number = request.POST.get('request_number')
-        return redirect('progress_check', request_number=request_number)
-    return render(request, 'check_request_status.html')
+
+        # Example validation: Check if the request number is valid
+        if not validate_request_number(request_number):
+            error_message = "Request number not found. Please try again."
+        else:
+            # If the request number is valid, redirect to the progress check page
+            return redirect('progress_check', request_number=request_number)
+
+    # If the method is GET or the request number is invalid, render the form with any error message
+    return render(request, 'check_request_status.html', {'error_message': error_message})
+
+def validate_request_number(request_number):
+    # Replace this with your actual validation logic
+    valid_request_numbers = ['ABC0001', 'ABC0002']  # Example list of valid numbers
+    return request_number in valid_request_numbers
 
 
 def progress_check(request, request_number=None):
@@ -70,9 +85,7 @@ def progress_check(request, request_number=None):
             'subject': 'Leaky faucet',
             'message': 'The kitchen faucet has been leaking for a week.',
         }
-
     statuses = ['Request<br>Sent', 'Request<br>Read', 'Contractor<br>Called', 'Appointment<br>Set', 'Request<br>Complete']
-
 
     # Safely handle cases where the status might not be in the list
     if maintenance_request.status in statuses:
