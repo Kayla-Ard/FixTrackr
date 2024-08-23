@@ -12,6 +12,7 @@ urlpatterns = [
 
     # Property Manager API URLs
     path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
+    path('api/login/', views.login, name='login'),
     path('api/properties/', views.list_properties, name='list_properties'),
     path('api/properties/create/', views.create_property, name='create_property'),
     path('api/properties/update/<int:id>/', views.update_property, name='update_property'),
