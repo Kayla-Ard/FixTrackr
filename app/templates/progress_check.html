@@ -35,8 +35,16 @@
             <div class="top-section">
                 <h3>Progress Check</h3>
                 <p>Request #{{ maintenance_request.request_number }}</p>
-                <p>Property Manager: {{ maintenance_request.property_manager.name }}</p>
+                <p>Property Manager: {{ property_manager_name }}</p>
+
             </div>
+
+            <div class="second-section">
+                <h3>Contractor Information</h3>
+                <p> {{ contractor_name }}</p>
+                <p> {{ contractor_phone }}</p>
+            </div>
+            
 
             <div class="middle-section">
                 <div class="status-container">
@@ -50,51 +58,20 @@
                     {% endfor %}
                 </div>
             </div>
-            
-    
-            {% comment %} <div class="middle-section">
-                <div class="status-container">
-                    <div class="status-item">
-                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Sent' %}700{% else %}400{% endif %};">Request<br>Sent</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: {% if maintenance_request.status in 'Request Sent,Request Read,Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Sent' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Read' %}700{% else %}400{% endif %};">Request<br>Read</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: {% if maintenance_request.status in 'Request Read,Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Read' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Contractor Called' %}700{% else %}400{% endif %};">Contractor<br>Called</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: {% if maintenance_request.status in 'Contractor Called,Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Contractor Called' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Appointment Set' %}700{% else %}400{% endif %};">Appointment<br>Set</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: {% if maintenance_request.status in 'Appointment Set,Request Complete'.split(',') %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Appointment Set' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label" style="font-weight: {% if maintenance_request.status == 'Request Complete' %}700{% else %}400{% endif %};">Request<br>Complete</span>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: {% if maintenance_request.status == 'Request Complete' %}100%{% else %}0%{% endif %}; background-color: {% if maintenance_request.status == 'Request Complete' %}#0466C8{% else %}#CCCCCC{% endif %};"></div>
-                        </div>
-                    </div>
-                
-                </div>
-            </div> {% endcomment %}
+
+            <div class="forth-section">
+                <h3>Message from your property manager</h3>
+                <p> {{ contractor_message }}</p>
+            </div>
             
             <div class="bottom-section">
                 <h3>Your Maintenance Request</h3>
-                <p>Sent: {{ maintenance_request.date_sent|localtime }}</p>
+                <p>Sent: {{ maintenance_request.date_sent|localtime }} PT</p>
                 <p>Full Name: {{ maintenance_request.full_name }}</p>
                 <p>Email: {{ maintenance_request.email }}</p>
                 <p>Subject: {{ maintenance_request.subject }}</p>
                 <p>Message: {{ maintenance_request.message }}</p>
+                <p>Availability: {{ maintenance_request.availability }}</p> 
             </div>            
             
         </div>

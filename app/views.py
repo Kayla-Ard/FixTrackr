@@ -28,7 +28,6 @@ def generate_request_number():
 
 
 def submit_request(request):
-    try:
         if request.method == 'POST':
             form = MaintenanceRequestForm(request.POST, request.FILES)
             if form.is_valid():
@@ -44,14 +43,12 @@ def submit_request(request):
                     
                 return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
             else:
-                print(form.errors)  # Output errors for inspection
+                
                 return render(request, 'submit_request.html', {'form': form})
         else:
             form = MaintenanceRequestForm()
         return render(request, 'submit_request.html', {'form': form})
-    except Exception as e:
-            logging.error(f"Error occurred: {e}")
-            return render(request, 'submit_request.html', {'form': form}) 
+    
 
 
 
@@ -59,10 +56,11 @@ def check_request_status(request):
     error_message = None  # Initialize the error message as None
 
     if request.method == 'POST':
-        request_number = request.POST.get('request_number')
+        request_number = request.POST.get('request_number').strip()
 
-        # Example validation: Check if the request number is valid
-        if not validate_request_number(request_number):
+        # Validate if the request number exists in the database
+        maintenance_request = MaintenanceRequest.objects.filter(request_number=request_number).first()
+        if not maintenance_request:
             error_message = "Request number not found. Please try again."
         else:
             # If the request number is valid, redirect to the progress check page
@@ -70,6 +68,9 @@ def check_request_status(request):
 
     # If the method is GET or the request number is invalid, render the form with any error message
     return render(request, 'check_request_status.html', {'error_message': error_message})
+
+
+
 
 def validate_request_number(request_number):
     # Replace this with your actual validation logic
@@ -80,6 +81,7 @@ def validate_request_number(request_number):
 def progress_check(request, request_number=None):
     if request_number:
         maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
+        print(f"Found maintenance request: {maintenance_request}")
     else:
         # Mock data for development purposes
         maintenance_request = {
@@ -91,19 +93,34 @@ def progress_check(request, request_number=None):
             'subject': 'Leaky faucet',
             'message': 'The kitchen faucet has been leaking for a week.',
         }
+    
+    # Safely handle the property_manager
+    property_manager_name = maintenance_request.property_manager.name if maintenance_request and maintenance_request.property_manager else 'N/A'
+    print(f"Property Manager: {property_manager_name}")
+    
     statuses = ['Request<br>Sent', 'Request<br>Read', 'Contractor<br>Called', 'Appointment<br>Set', 'Request<br>Complete']
 
     # Safely handle cases where the status might not be in the list
-    if maintenance_request.status in statuses:
-        current_index = statuses.index(maintenance_request.status)
-    else:
-        current_index = -1  
+    current_index = -1
+    if maintenance_request:
+        if maintenance_request.status in statuses:
+            current_index = statuses.index(maintenance_request.status)
+            print(f"Current index of status '{maintenance_request.status}': {current_index}")
+        else:
+            print(f"Status '{maintenance_request.status}' not found in predefined statuses.")
 
     return render(request, 'progress_check.html', {
         'maintenance_request': maintenance_request,
         'statuses': statuses,
         'current_index': current_index,
+        'property_manager_name': property_manager_name,
+        'contractor_name': maintenance_request.contractor_name or '', 
+        'contractor_phone': maintenance_request.contractor_phone or '',
+        'contractor_message': maintenance_request.contractor_message or '',
     })
+
+
+
 
 
 

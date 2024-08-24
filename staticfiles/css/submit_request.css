@@ -247,10 +247,11 @@ textarea::placeholder {
     width: 100%;
 }
 
-.error {
-    color: red;
+.error-message {
+    color: #DC3345;
+    font-size: 16px;
+    font-weight: 400;
     margin-top: 5px;
-    font-size: 12px;
 }
 
 .maintenance-form {

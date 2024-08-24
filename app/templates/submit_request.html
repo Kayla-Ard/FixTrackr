@@ -23,7 +23,7 @@
         <div class="form-section">
             <h1>Please fill out maintenance request</h1>
             <p class="sub-p">All fields are required. Images are optional.</p>
-            <form method="post" enctype="multipart/form-data" class="maintenance-form">
+            <form method="post" enctype="multipart/form-data" class="maintenance-form" novalidate>
                 {% csrf_token %}
                 
                 <!-- Full Name Field -->
@@ -31,8 +31,8 @@
                     <label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
                     {{ form.full_name }}
                     {% if form.full_name.errors %}
-                        <div class="error">
-                            {{ form.full_name.errors }}
+                        <div class="error-message">
+                            {{ form.full_name.errors.as_text }}
                         </div>
                     {% endif %}
                 </div>
@@ -43,8 +43,9 @@
                     <p>Please use primary tenant's email as this will make sure your request goes to your property manager.</p>
                     {{ form.email }}
                     {% if form.email.errors %}
-                        <div class="error">
-                            {{ form.email.errors }}
+                        <div class="error-message">
+                            {{ form.email.errors.as_text }}
+
                         </div>
                     {% endif %}
                 </div>
@@ -54,8 +55,8 @@
                     <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label> <!-- Custom label rendering without colon -->
                     {{ form.subject }}
                     {% if form.subject.errors %}
-                        <div class="error">
-                            {{ form.subject.errors }}
+                        <div class="error-message">
+                            {{ form.subject.errors.as_text }}
                         </div>
                     {% endif %}
                 </div>
@@ -66,8 +67,8 @@
                     {{ form.message }} 
                     <p class="character-limit">500 Characters Max</p> 
                     {% if form.message.errors %}
-                        <div class="error">
-                            {{ form.message.errors }}
+                        <div class="error-message">
+                            {{ form.message.errors.as_text }}
                         </div>
                     {% endif %}
                 </div>
@@ -83,15 +84,14 @@
                     </div>
                 </div>
 
-
                 <!-- Availability Field -->
                 <div class="form-group">
                     <label for="{{ form.availability.id_for_label }}">{{ form.availability.label }}</label> <!-- Custom label rendering without colon -->
                     <p>Please let property manager know when you are available for a contractor to come over and do repairs.</p>
                     {{ form.availability }}
                     {% if form.availability.errors %}
-                        <div class="error">
-                            {{ form.availability.errors }}
+                        <div class="error-message">
+                            {{ form.availability.errors.as_text }}
                         </div>
                     {% endif %}
                 </div>
