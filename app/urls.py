@@ -13,14 +13,20 @@ urlpatterns = [
     # Property Manager API URLs
     path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
     path('api/login/', views.login, name='login'),
-    path('api/properties/', views.list_properties, name='list_properties'),
-    path('api/properties/create/', views.create_property, name='create_property'),
-    path('api/properties/update/<int:id>/', views.update_property, name='update_property'),
-    path('api/properties/delete/<int:id>/', views.delete_property, name='delete_property'),
-    path('api/maintenance-requests/', views.list_maintenance_requests, name='list_maintenance_requests'),
-    path('api/maintenance-requests/update-status/<int:id>/', views.update_request_status, name='update_request_status'),
+    
+    # Unit management URLs
+    path('api/units/', views.list_units, name='list_units'),
+    path('api/units/create/', views.create_unit, name='create_unit'),
+    path('api/units/update/<int:id>/', views.update_unit, name='update_unit'),
+    path('api/units/delete/<int:id>/', views.delete_unit, name='delete_unit'),
+    
+    # Notifications URLs
+    path('api/notifications/', views.list_notifications, name='list_notifications'),
+    path('api/maintenance-requests/read/<int:request_id>/', views.mark_request_as_read, name='mark_request_as_read'),
+    
+    # Manage a specific maintenance request
+    path('api/maintenance-requests/manage/<int:request_id>/', views.manage_maintenance_request, name='manage_maintenance_request'),
 
 ]
 
-    # Example protected view URL
-    # path('api/protected/', views.ExampleProtectedView.as_view(), name='example_protected_view'),
+

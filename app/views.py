@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse
 from django.template import loader
-from .models import Property_Manager, MaintenanceRequest, Image, Tenant
+from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, UnitSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -16,6 +16,11 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 import logging
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+
+
 
 # Tenant related HTML Views
 
@@ -34,6 +39,16 @@ def submit_request(request):
                 maintenance_request = form.save(commit=False)
                 maintenance_request.date_sent = timezone.now()
                 maintenance_request.request_number = generate_request_number()
+                
+                try:
+                    # Find the tenant using the provided email
+                    tenant = Tenant.objects.get(email=maintenance_request.email)
+                    # Assign the property manager to the maintenance request
+                    maintenance_request.property_manager = tenant.property_manager
+                except Tenant.DoesNotExist:
+                    # Handle case where tenant is not found (you might want to return an error)
+                    return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
+                
                 maintenance_request.save()
 
                 # Process multiple image files
@@ -118,9 +133,7 @@ def progress_check(request, request_number=None):
         'contractor_phone': maintenance_request.contractor_phone or '',
         'contractor_message': maintenance_request.contractor_message or '',
     })
-
-
-
+    
 
 
 
@@ -170,7 +183,7 @@ def register_property_manager(request):
                 property_manager=property_manager
             )
 
-        # Generate tokens
+        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
 
@@ -197,10 +210,14 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
+    # Normalize the email by converting it to lowercase and stripping any spaces
+    email = email.lower().strip()
+
+    # Authenticate using the email and password
     user = authenticate(request, username=email, password=password)
 
     if user is not None:
-        # Generate tokens
+        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
 
@@ -219,70 +236,168 @@ def login(request):
 
 
 
-# List properties
+# Create a unit
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_unit(request):
+    data = request.data
+
+    # Validate property manager existence
+    try:
+        property_manager = Property_Manager.objects.get(email=request.user.email)
+    except Property_Manager.DoesNotExist:
+        return Response({"error": "Property Manager not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Create tenant and unit
+    try:
+        tenant = Tenant.objects.create(
+            full_name=data.get('primary_tenant_name'),
+            email=data.get('primary_tenant_email'),
+            property_manager=property_manager
+        )
+
+        unit = Unit.objects.create(
+            title=data.get('unit_title'),
+            address=data.get('unit_address'),
+            notes=data.get('notes', ''),
+            tenant=tenant,
+            property_manager=property_manager
+        )
+
+        return Response({
+            "unit_id": unit.id,
+            "title": unit.title,
+            "address": unit.address,
+            "primary_tenant_name": tenant.full_name,
+            "primary_tenant_email": tenant.email,
+            "notes": unit.notes,
+        }, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+# List all units
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def list_properties(request):
-    properties = Property_Manager.objects.filter(user=request.user)
-    serializer = PropertyManagerSerializer(properties, many=True)
+def list_units(request):
+    property_manager = get_object_or_404(Property_Manager, email=request.user.email)
+    units = Unit.objects.filter(property_manager=property_manager)
+    serializer = UnitSerializer(units, many=True)
     return Response(serializer.data)
 
 
-# Create properties 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_property(request):
-    serializer = PropertyManagerSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Update Properties
+# Update a unit
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def update_property(request, id):
-    property = get_object_or_404(Property_Manager, id=id, user=request.user)
-    serializer = PropertyManagerSerializer(property, data=request.data, partial=True)
+def update_unit(request, id):
+    property_manager = get_object_or_404(Property_Manager, email=request.user.email)
+    unit = get_object_or_404(Unit, id=id, property_manager=property_manager)
+
+    serializer = UnitSerializer(unit, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Delete Properties
+
+# Delete a unit
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_property(request, id):
-    property = get_object_or_404(Property_Manager, id=id, user=request.user)
-    property.delete()
+def delete_unit(request, id):
+    property_manager = get_object_or_404(Property_Manager, email=request.user.email)
+    unit = get_object_or_404(Unit, id=id, property_manager=property_manager)
+    unit.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# List maintenance request
+
+
+# List notifications
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def list_maintenance_requests(request):
-    requests = MaintenanceRequest.objects.filter(property_manager__user=request.user)
+def list_notifications(request):
+    requests = MaintenanceRequest.objects.filter(property_manager__user=request.user).order_by('-date_sent')
     serializer = MaintenanceRequestSerializer(requests, many=True)
     return Response(serializer.data)
 
 
 
-# Update maintenance request
-@api_view(['PATCH'])
+# Endpoint to mark request as sent & trigger automated email to tenant
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update_request_status(request, id):
-    maintenance_request = get_object_or_404(MaintenanceRequest, id=id, property_manager__user=request.user)
-    maintenance_request.status = request.data.get('status', maintenance_request.status)
-    maintenance_request.save()
-    return Response({'status': maintenance_request.status})
+def mark_request_as_read(request, request_id):
+    try:
+        maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, property_manager__user=request.user)
+        
+        # Update the status of the request to "Request Read"
+        maintenance_request.status = "Request Read"
+        maintenance_request.save()
+
+        # Generate the URL to the tenant's specific progress check page
+        progress_check_url = request.build_absolute_uri(reverse('progress_check', kwargs={'request_number': maintenance_request.request_number}))
+        
+        # Send an email notification to the tenant
+        tenant_email = maintenance_request.email
+        send_mail(
+            subject="Your Maintenance Request Has Been Read",
+            message=f"Hello {maintenance_request.full_name},\n\nYour maintenance request with the subject '{maintenance_request.subject}' has been read by your property manager.\n\n You can track the progress of your request directly using the link below:\n\n{progress_check_url}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[tenant_email],
+            fail_silently=False,
+        )
+
+        return Response({"message": "Request marked as read and tenant notified"}, status=status.HTTP_200_OK)
+
+    except MaintenanceRequest.DoesNotExist:
+        return Response({"error": "Maintenance request not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 
+# To see & update status of maintenance request  
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def manage_maintenance_request(request, request_id):
+    maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, property_manager__user=request.user)
+    
+    if request.method == 'GET':
+        serializer = MaintenanceRequestSerializer(maintenance_request)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        data = request.data
+        maintenance_request.priority = data.get('priority', maintenance_request.priority)
+        maintenance_request.status = data.get('status', maintenance_request.status)
+        maintenance_request.contractor_name = data.get('contractor_name', maintenance_request.contractor_name)
+        maintenance_request.contractor_phone = data.get('contractor_phone', maintenance_request.contractor_phone)
+        maintenance_request.property_manager_message = data.get('property_manager_message', maintenance_request.property_manager_message)
 
+        # Save any additional images
+        for image_file in request.FILES.getlist('additional_images'):
+            image = Image(file=image_file, maintenance_request=maintenance_request)
+            image.save()
 
+        maintenance_request.save()
+        
+        # Generate the URL to the tenant's specific progress check page
+        progress_check_url = request.build_absolute_uri(reverse('progress_check', kwargs={'request_number': maintenance_request.request_number}))
+
+        # When the contractor's name and phone are provided, send an email to the tenant
+        if maintenance_request.contractor_name and maintenance_request.contractor_phone:
+            send_mail(
+                subject="Appointment Set for Your Maintenance Request",
+                message=f"Hello {maintenance_request.full_name},\n\nYour property manager has set an appointment with {maintenance_request.contractor_name} for your maintenance request. Please check your progress check page for more details. \n\nYou can track the progress of your request directly using the link below:\n\n{progress_check_url}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[maintenance_request.email],
+                fail_silently=False,
+            )
+
+        return Response({"message": "Maintenance request updated successfully"}, status=status.HTTP_200_OK)
 
 
 # If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:

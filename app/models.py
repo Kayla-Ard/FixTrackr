@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from rest_framework import serializers
+
 
 # Property Manager model
 class Property_Manager(models.Model):
@@ -11,6 +13,7 @@ class Property_Manager(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+
 # Tenant model (for linking tenants to a property manager)
 class Tenant(models.Model):
     full_name = models.CharField(max_length=255)
@@ -20,22 +23,54 @@ class Tenant(models.Model):
     def __str__(self):
         return self.full_name
 
+
+
+# Unit models
+class Unit(models.Model):
+    title = models.CharField(max_length=255)
+    address = models.TextField()
+    notes = models.TextField(blank=True, null=True)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    property_manager = models.ForeignKey(Property_Manager, related_name='units', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.title} - {self.address}"
+    
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'title', 'address', 'notes', 'tenant']
+
+
+
 # Maintenance request model for tenants
 class MaintenanceRequest(models.Model):
+    PRIORITY_CHOICES = [
+        ('Low Priority', 'Low Priority'),
+        ('High Priority', 'High Priority'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Request Sent', 'Request Sent'),
+        ('Request Read', 'Request Read'),
+        ('Contractor Called', 'Contractor Called'),
+        ('Appointment Set', 'Appointment Set'),
+        ('Request Complete', 'Request Complete'),
+    ]
+    
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
     subject = models.CharField(max_length=200)
     message = models.TextField()
     date_sent = models.DateTimeField(default=timezone.now)
     availability = models.CharField(max_length=255, blank=True, null=True)
-    request_number = models.CharField(max_length=20, unique=True)
-    status = models.CharField(max_length=50, default='Pending')
-    contractor_name = models.CharField(max_length=255, blank=True, null=True)  # New field for contractor name
-    contractor_message = models.TextField(null=True, blank=True) 
+    priority = models.CharField(max_length=50, choices=PRIORITY_CHOICES, default='Medium') 
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Request Sent')
+    contractor_name = models.CharField(max_length=255, blank=True, null=True)  
+    property_manager_message = models.TextField(null=True, blank=True)
     contractor_phone = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # Add the property_manager field to link to the Property_Manager model
+    unit = models.ForeignKey(Unit, related_name='maintenance_requests', on_delete=models.CASCADE, null=True, blank=True)
     property_manager = models.ForeignKey(Property_Manager, related_name='maintenance_requests', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -46,3 +81,15 @@ class Image(models.Model):
     maintenance_request = models.ForeignKey(MaintenanceRequest, related_name='images', on_delete=models.CASCADE, null=True, blank=True)
     file = models.ImageField(upload_to='maintenance_images/')
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+# Notification model for property managers
+class Notification(models.Model):
+    property_manager = models.ForeignKey(Property_Manager, related_name='notifications', on_delete=models.CASCADE)
+    maintenance_request = models.ForeignKey(MaintenanceRequest, related_name='notifications', on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.property_manager.first_name} {self.property_manager.last_name}"
