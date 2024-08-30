@@ -6,6 +6,7 @@ import datetime
 
 # Property Manager model
 class Property_Manager(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE) 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True, default='default@example.com')

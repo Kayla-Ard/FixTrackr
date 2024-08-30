@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse
 from django.template import loader
-from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, UnitSerializer
+from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, UnitSerializer, Notification
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -228,9 +228,10 @@ def login(request):
 
     # Normalize the email by converting it to lowercase and stripping any spaces
     email = email.lower().strip()
-
+    print(f"Attempting to authenticate user with email: {email}")
+    
     # Authenticate using the email and password
-    user = authenticate(request, email=email, password=password)
+    user = authenticate(request, username=email, password=password)
 
     if user is not None:
         # Generate JWT tokens
@@ -248,6 +249,7 @@ def login(request):
             }
         }, status=status.HTTP_200_OK)
     else:
+        print(f"Authentication failed for email: {email}")
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -338,9 +340,22 @@ def delete_unit(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_notifications(request):
-    requests = MaintenanceRequest.objects.filter(property_manager__user=request.user).order_by('-date_sent')
-    serializer = MaintenanceRequestSerializer(requests, many=True)
-    return Response(serializer.data)
+    try:
+        # Get the Property_Manager instance for the authenticated user
+        property_manager = Property_Manager.objects.get(user=request.user)
+        
+        # Fetch notifications related to this Property_Manager
+        notifications = Notification.objects.filter(property_manager=property_manager).order_by('-created_at')
+        
+        # Extract maintenance requests from notifications
+        maintenance_requests = [notification.maintenance_request for notification in notifications]
+        
+        # Serialize and return the data
+        serializer = MaintenanceRequestSerializer(maintenance_requests, many=True)
+        return Response(serializer.data)
+    
+    except Property_Manager.DoesNotExist:
+        return Response({'detail': 'Property Manager not found'}, status=404)
 
 
 
