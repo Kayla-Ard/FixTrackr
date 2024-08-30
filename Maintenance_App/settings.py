@@ -184,3 +184,29 @@ CORS_ALLOWED_ORIGINS = [
 
 # Email for tenants to get updates from 
 DEFAULT_FROM_EMAIL = 'Fixtrackr@TenantUpdate.com'
+
+# my_project/settings.py
+AUTHENTICATION_BACKENDS = ['app.authentication_backends.EmailBackend']
+
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#         'app': {  # Replace 'app' with your Django app name
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

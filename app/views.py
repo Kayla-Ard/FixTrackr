@@ -14,11 +14,14 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-import logging
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDict
+from django.contrib.auth import get_user_model
+
+
 
 
 
@@ -33,38 +36,33 @@ def generate_request_number():
 
 
 def submit_request(request):
-        if request.method == 'POST':
-            form = MaintenanceRequestForm(request.POST, request.FILES)
-            if form.is_valid():
-                maintenance_request = form.save(commit=False)
-                maintenance_request.date_sent = timezone.now()
-                maintenance_request.request_number = generate_request_number()
-                
-                try:
-                    # Find the tenant using the provided email
-                    tenant = Tenant.objects.get(email=maintenance_request.email)
-                    # Assign the property manager to the maintenance request
-                    maintenance_request.property_manager = tenant.property_manager
-                except Tenant.DoesNotExist:
-                    # Handle case where tenant is not found (you might want to return an error)
-                    return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
-                
-                maintenance_request.save()
+    if request.method == 'POST':
+        form = MaintenanceRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            maintenance_request = form.save(commit=False)
+            maintenance_request.date_sent = timezone.now()
+            maintenance_request.request_number = generate_request_number()
+            
+            try:
+                tenant = Tenant.objects.get(email=maintenance_request.email)
+                maintenance_request.property_manager = tenant.property_manager
+            except Tenant.DoesNotExist:
+                return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
+            
+            maintenance_request.save()
 
-                # Process multiple image files
-                for image_file in request.FILES.getlist('images'):
+            images = form.cleaned_data.get('images')
+            if images:
+                for image_file in images:
                     image = Image(file=image_file, maintenance_request=maintenance_request)
                     image.save()
-                    
-                return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
-            else:
-                
-                return render(request, 'submit_request.html', {'form': form})
-        else:
-            form = MaintenanceRequestForm()
-        return render(request, 'submit_request.html', {'form': form})
-    
 
+            return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
+        else:
+            return render(request, 'submit_request.html', {'form': form})
+    else:
+        form = MaintenanceRequestForm()
+    return render(request, 'submit_request.html', {'form': form})
 
 
 def check_request_status(request):
@@ -134,6 +132,15 @@ def progress_check(request, request_number=None):
         'contractor_message': maintenance_request.contractor_message or '',
     })
     
+# debugging output to see what files are being passed
+def value_from_datadict(self, data, files, name):
+    if isinstance(files, MultiValueDict):
+        file_list = files.getlist(name)
+        print(f"Files in widget value_from_datadict: {file_list}")  # Debugging line
+        return file_list
+    file = files.get(name, None)
+    print(f"Single file in widget value_from_datadict: {file}")  # Debugging line
+    return file
 
 
 
@@ -145,11 +152,11 @@ def progress_check(request, request_number=None):
 
 # PWA RESTful API endpoints
 
-# Property manager register endpoint
 @api_view(['POST'])
 def register_property_manager(request):
     data = request.data
-
+    User = get_user_model()
+    
     # Validate password match
     if data.get('password') != data.get('confirm_password'):
         return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
@@ -159,17 +166,23 @@ def register_property_manager(request):
         if User.objects.filter(email=data['email']).exists():
             return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create user and property manager
+        # Create user
         user = User.objects.create_user(
+            username=data['email'],
             email=data['email'],
             password=data['password'],
-            first_name=data['firstName'],
-            last_name=data['lastName']
+            first_name=data['first_name'],
+            last_name=data['last_name']
         )
+        print(f"User created: {user}")
 
+        if not user:
+            return Response({"error": "User creation failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create property manager
         property_manager = Property_Manager.objects.create(
-            first_name=data['firstName'],
-            last_name=data['lastName'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
             email=data['email'],
             phone=data.get('phone')
         )
@@ -183,13 +196,13 @@ def register_property_manager(request):
                 property_manager=property_manager
             )
 
-        # Generate JWT tokens
-        refresh = RefreshToken.for_user(user)
-        access_token = refresh.access_token
+        # Generate JWT tokens or perform login
+        user = authenticate(email=data['email'], password=data['password'])
+        if user is None:
+            return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        
 
         return Response({
-            'refresh': str(refresh),
-            'access': str(access_token),
             'user': {
                 'id': user.id,
                 'email': user.email,
@@ -204,6 +217,9 @@ def register_property_manager(request):
 
 
 
+
+
+
 # Property manager login endpoint
 @api_view(['POST'])
 def login(request):
@@ -214,7 +230,7 @@ def login(request):
     email = email.lower().strip()
 
     # Authenticate using the email and password
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, email=email, password=password)
 
     if user is not None:
         # Generate JWT tokens

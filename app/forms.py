@@ -1,6 +1,8 @@
 from django import forms
 from .models import MaintenanceRequest
 from .widgets import CustomClearableFileInput
+from django.forms import ClearableFileInput
+
 
 
 class MaintenanceRequestForm(forms.ModelForm):
@@ -45,3 +47,4 @@ class MaintenanceRequestForm(forms.ModelForm):
     class Meta:
         model = MaintenanceRequest
         fields = ['full_name', 'email', 'subject', 'message', 'images', 'availability']
+
