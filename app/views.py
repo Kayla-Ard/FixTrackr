@@ -155,10 +155,13 @@ def value_from_datadict(self, data, files, name):
 @api_view(['POST'])
 def register_property_manager(request):
     data = request.data
-    User = get_user_model()
-    
-    # Validate password match
-    if data.get('password') != data.get('confirm_password'):
+    password = data.get('password', '')
+    confirm_password = data.get('confirm_password', '')
+
+    # Debugging: log the passwords
+    print(f"Password: '{password}', Confirm Password: '{confirm_password}'")
+
+    if password != confirm_password:
         return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -181,10 +184,11 @@ def register_property_manager(request):
 
         # Create property manager
         property_manager = Property_Manager.objects.create(
+            user=user,
             first_name=data['first_name'],
             last_name=data['last_name'],
-            email=data['email'],
-            phone=data.get('phone')
+            email=data['email']
+
         )
 
         # Create tenant records if provided
@@ -197,7 +201,7 @@ def register_property_manager(request):
             )
 
         # Generate JWT tokens or perform login
-        user = authenticate(email=data['email'], password=data['password'])
+        user = authenticate(username=data['email'], password=data['password'])
         if user is None:
             return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -217,9 +221,6 @@ def register_property_manager(request):
 
 
 
-
-
-
 # Property manager login endpoint
 @api_view(['POST'])
 def login(request):
@@ -228,10 +229,12 @@ def login(request):
 
     # Normalize the email by converting it to lowercase and stripping any spaces
     email = email.lower().strip()
-    print(f"Attempting to authenticate user with email: {email}")
+    print(f"Attempting to authenticate user with email: {email} and password: {password}")
     
     # Authenticate using the email and password
     user = authenticate(request, username=email, password=password)
+
+    print(f"Result from authenticate: {user}")
 
     if user is not None:
         # Generate JWT tokens
@@ -294,6 +297,7 @@ def create_unit(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -429,7 +433,6 @@ def manage_maintenance_request(request, request_id):
             )
 
         return Response({"message": "Maintenance request updated successfully"}, status=status.HTTP_200_OK)
-
 
 # If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:
 

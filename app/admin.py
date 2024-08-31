@@ -5,7 +5,7 @@ from .models import Property_Manager, MaintenanceRequest, User
 
 @admin.register(Property_Manager)
 class PropertyManagerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'phone')
+    list_display = ('first_name', 'last_name', 'email')
     search_fields = ('first_name', 'last_name', 'email')
 
 
