@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MaintenanceRequest, Property_Manager, Image, Unit
+from .models import MaintenanceRequest, Property_Manager, Image, Unit, Tenant, Notification
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,4 +21,14 @@ class PropertyManagerSerializer(serializers.ModelSerializer):
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
+        fields = '__all__'
+
+class TenantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tenant
+        fields = '__all__'
+        
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'

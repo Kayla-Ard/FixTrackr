@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.template import loader
-from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, UnitSerializer, Notification
+from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, Notification
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ from rest_framework import status
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import MaintenanceRequestForm
 import uuid
-from .serializers import MaintenanceRequestSerializer, PropertyManagerSerializer
+from .serializers import MaintenanceRequestSerializer, PropertyManagerSerializer, UnitSerializer, TenantSerializer, ImageSerializer, NotificationSerializer
 from rest_framework.views import APIView
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -50,9 +50,9 @@ def submit_request(request):
             
             maintenance_request.save()
 
-            images = form.cleaned_data.get('images')
-            if images:
-                for image_file in images:
+            # images = form.cleaned_data.get('images')
+            if 'images' in request.FILES:
+                for image_file in request.FILES.getlist('images'):
                     image = Image(file=image_file, maintenance_request=maintenance_request)
                     image.save()
 
@@ -351,7 +351,7 @@ def list_notifications(request):
         
         # Fetch notifications related to this Property_Manager
         notifications = Notification.objects.filter(property_manager=property_manager).order_by('-created_at')
-        
+        print(f"Notifications: {notifications}")
         # Extract maintenance requests from notifications
         maintenance_requests = [notification.maintenance_request for notification in notifications]
         

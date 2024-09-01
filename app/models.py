@@ -34,10 +34,7 @@ class Unit(models.Model):
     def __str__(self):
         return f"{self.title} - {self.address}"
     
-class UnitSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Unit
-        fields = ['id', 'title', 'address', 'notes', 'tenant']
+
 
 # Maintenance request model for tenants
 class MaintenanceRequest(models.Model):
