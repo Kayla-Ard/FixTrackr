@@ -19,6 +19,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseServerError
 
 
 
@@ -47,8 +48,16 @@ def submit_request(request):
                 maintenance_request.property_manager = tenant.property_manager
             except Tenant.DoesNotExist:
                 return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
-            
-            maintenance_request.save()
+            except Exception as e:
+                # Log the exception and return a server error response
+                print(f"Error occurred while retrieving tenant: {e}")
+                return HttpResponseServerError("An error occurred while processing the request.")
+            try:
+                maintenance_request.save()
+            except Exception as e:
+                # Log the exception and return a server error response
+                print(f"Error occurred while saving maintenance request: {e}")
+                return HttpResponseServerError("An error occurred while saving the request.")
 
             # images = form.cleaned_data.get('images')
             if 'images' in request.FILES:
