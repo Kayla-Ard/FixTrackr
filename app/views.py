@@ -278,12 +278,13 @@ def create_unit(request):
         )
 
         unit = Unit.objects.create(
-            title=data.get('unit_title'),
-            address=data.get('unit_address'),
+            title=data.get('unit_title', ''),
+            address=data.get('unit_address', ''),
             notes=data.get('notes', ''),
             tenant=tenant,
             property_manager=property_manager
         )
+        print(f"Request Data: {data}")
 
         return Response({
             "unit_id": unit.id,
