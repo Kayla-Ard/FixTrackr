@@ -17,3 +17,8 @@ class PropertyManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property_Manager
         fields = '__all__'
+        
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = '__all__'

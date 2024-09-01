@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
+
 
 # export SECRET_KEY='23456ytgfcvgh9876543wsdfgbji876545tgh'
 
@@ -72,7 +77,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'Maintenance_App.urls'
@@ -178,7 +182,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # frontend's URL
+    "http://localhost:5173",  # frontend's URL local
+    "http://127.0.0.1:8000", #backend's URL local 
 ]
 
 
@@ -186,27 +191,9 @@ CORS_ALLOWED_ORIGINS = [
 DEFAULT_FROM_EMAIL = 'Fixtrackr@TenantUpdate.com'
 
 # my_project/settings.py
-AUTHENTICATION_BACKENDS = ['app.authentication_backends.EmailBackend']
+AUTHENTICATION_BACKENDS = [
+    'app.authentication_backends.EmailBackend'
+]
 
 
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#         },
-#         'app': {  # Replace 'app' with your Django app name
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }

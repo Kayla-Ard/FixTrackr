@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Property_Manager, MaintenanceRequest, User
+from .models import Property_Manager, MaintenanceRequest
 
+# This is where we register our models(tables)
 # This is where we register our models(tables)
 
 @admin.register(Property_Manager)

@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 from django.template import loader
 from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, UnitSerializer, Notification
@@ -232,7 +231,7 @@ def login(request):
     print(f"Attempting to authenticate user with email: {email} and password: {password}")
     
     # Authenticate using the email and password
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(username=email, password=password)
 
     print(f"Result from authenticate: {user}")
 
@@ -278,13 +277,12 @@ def create_unit(request):
         )
 
         unit = Unit.objects.create(
-            title=data.get('unit_title', ''),
-            address=data.get('unit_address', ''),
+            title=data.get('unit_title'),
+            address=data.get('unit_address'),
             notes=data.get('notes', ''),
             tenant=tenant,
             property_manager=property_manager
         )
-        print(f"Request Data: {data}")
 
         return Response({
             "unit_id": unit.id,
@@ -310,6 +308,8 @@ def list_units(request):
     units = Unit.objects.filter(property_manager=property_manager)
     serializer = UnitSerializer(units, many=True)
     return Response(serializer.data)
+
+
 
 
 
@@ -434,8 +434,6 @@ def manage_maintenance_request(request, request_id):
             )
 
         return Response({"message": "Maintenance request updated successfully"}, status=status.HTTP_200_OK)
-
-# If we want to protect certain views with JWT authentication, we will need to use the IsAuthenticated permission class in our views like this:
 
 # class ExampleProtectedView(APIView):
 #     permission_classes = [IsAuthenticated]
