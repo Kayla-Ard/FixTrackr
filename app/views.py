@@ -47,28 +47,31 @@ def submit_request(request):
                 tenant = Tenant.objects.get(email=maintenance_request.email)
                 maintenance_request.property_manager = tenant.property_manager
             except Tenant.DoesNotExist:
-                return JsonResponse({'success': False, 'error': 'Tenant not found'}, status=400)
+                
+                return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
             
             try:
                 maintenance_request.save()
 
-                # images = form.cleaned_data.get('images')
                 if 'images' in request.FILES:
                     for image_file in request.FILES.getlist('images'):
                         image = Image(file=image_file, maintenance_request=maintenance_request)
                         image.save()
-                return JsonResponse({'success': True, 'request_number': maintenance_request.request_number})
+                # Redirect to a success page or show a success message
+                return redirect('request_submitted', request_number=maintenance_request.request_number)
             
             except Exception as e:
                 print(f"Error occurred while saving maintenance request: {e}")
-                return JsonResponse({'success': False, 'error': 'An error occurred while saving the request'}, status=500)
+                
+                return render(request, 'submit_request.html', {'form': form, 'error': 'An error occurred while saving the request'})
         else:
-            errors = form.errors.as_json()  # Detailed error response
-            print(f"Form errors: {errors}")  # Log errors
-            return JsonResponse({'success': False, 'error': 'Form is invalid', 'form_errors': errors}, status=400)
+            errors = form.errors.as_json()
+            print(f"Form errors: {errors}")
+            return render(request, 'submit_request.html', {'form': form, 'errors': form.errors})
     else:
         form = MaintenanceRequestForm()
     return render(request, 'submit_request.html', {'form': form})
+
 
 
 

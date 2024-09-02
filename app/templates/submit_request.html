@@ -23,7 +23,7 @@
         <div class="form-section">
             <h1>Please fill out maintenance request</h1>
             <p class="sub-p">All fields are required. Images are optional.</p>
-            <form method="post" enctype="multipart/form-data" action="{% url 'submit-request' %}" class="maintenance-form" novalidate>
+            <form method="post" enctype="multipart/form-data" action="{% url 'submit_request' %}" class="maintenance-form" novalidate>
                 {% csrf_token %}
                 
                 <!-- Full Name Field -->
@@ -76,9 +76,8 @@
                 <!-- Images Field -->
                 <div class="form-group">
                     <div class="file-upload-container">
-                        {{ form.images.label_tag }}
-                        {{ form.images }}
-                        <label for="{{ form.images.id_for_label }}" class="file-upload-label">
+                        <input type="file" id="images" name="images" multiple>
+                        <label for="images" class="file-upload-label">
                             Attach Up To 4 Images
                         </label>
                         <span class="file-upload-icon">📎</span>
@@ -196,31 +195,7 @@
 
             if (form) {
                 form.addEventListener('submit', function(event) {
-                    event.preventDefault(); // Prevent the default form submission
-
-                    const formData = new FormData(form);
-
-                    fetch('{% url "submit-request" %}', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest', // Indicates an AJAX request
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Handle success - redirect or show a success message
-                            window.location.href = `{% url 'request_submitted' %}?request_number=${data.request_number}`;
-                        } else {
-                            // Handle error
-                            alert(data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while processing the request.');
-                    });
+                    
                 });
             }
         });

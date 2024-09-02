@@ -16,7 +16,7 @@ urlpatterns = [
     path('check-request-status/', views.check_request_status, name='check_request_status'),
     path('progress-check/', views.progress_check, name='progress_check_no_number'),
     path('progress-check/<str:request_number>/', views.progress_check, name='progress_check'), 
-    path('request_submitted/', views.request_submitted, name='request_submitted.html'),
+    path('request_submitted/', views.request_submitted, name='request_submitted'),
     
     # Property Manager API URLs
     path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
