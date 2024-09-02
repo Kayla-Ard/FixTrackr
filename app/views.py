@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponseServerError
 from django.template import loader
 from .models import Property_Manager, MaintenanceRequest, Image, Tenant, Unit, Notification
 from rest_framework.permissions import IsAuthenticated
@@ -47,32 +47,45 @@ def submit_request(request):
                 tenant = Tenant.objects.get(email=maintenance_request.email)
                 maintenance_request.property_manager = tenant.property_manager
             except Tenant.DoesNotExist:
-                return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
-            except Exception as e:
-                # Log the exception and return a server error response
-                print(f"Error occurred while retrieving tenant: {e}")
-                return HttpResponseServerError("An error occurred while processing the request.")
+                return JsonResponse({'success': False, 'error': 'Tenant not found'}, status=400)
+            
             try:
                 maintenance_request.save()
+
+                # images = form.cleaned_data.get('images')
+                if 'images' in request.FILES:
+                    for image_file in request.FILES.getlist('images'):
+                        image = Image(file=image_file, maintenance_request=maintenance_request)
+                        image.save()
+                return JsonResponse({'success': True, 'request_number': maintenance_request.request_number})
+            
             except Exception as e:
-                # Log the exception and return a server error response
                 print(f"Error occurred while saving maintenance request: {e}")
-                return HttpResponseServerError("An error occurred while saving the request.")
-
-            # images = form.cleaned_data.get('images')
-            if 'images' in request.FILES:
-                for image_file in request.FILES.getlist('images'):
-                    image = Image(file=image_file, maintenance_request=maintenance_request)
-                    image.save()
-
-            return render(request, 'request_submitted.html', {'request_number': maintenance_request.request_number})
+                return JsonResponse({'success': False, 'error': 'An error occurred while saving the request'}, status=500)
         else:
-            return render(request, 'submit_request.html', {'form': form})
+            errors = form.errors.as_json()  # Detailed error response
+            print(f"Form errors: {errors}")  # Log errors
+            return JsonResponse({'success': False, 'error': 'Form is invalid', 'form_errors': errors}, status=400)
     else:
         form = MaintenanceRequestForm()
     return render(request, 'submit_request.html', {'form': form})
 
 
+
+
+
+def request_submitted(request):
+    # Extract the request_number from the query parameters
+    request_number = request.GET.get('request_number', 'Unknown')
+
+    # Render the request_submitted.html template with the request_number
+    return render(request, 'request_submitted.html', {
+        'request_number': request_number
+    })
+    
+    
+    
+    
 def check_request_status(request):
     error_message = None  # Initialize the error message as None
 

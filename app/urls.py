@@ -1,3 +1,9 @@
+# This code snippet is defining URL patterns for a Django web application. Each `path` function call
+# maps a URL pattern to a specific view function within the application. Here's a breakdown of what
+# each part is doing:
+# This code snippet is defining URL patterns for a Django web application. In Django, URL patterns are
+# defined in the `urlpatterns` list within the `urls.py` file of an app. Each URL pattern is
+# associated with a specific view function that will be called when a matching URL is accessed.
 from django.urls import path
 from . import views
 
@@ -10,7 +16,8 @@ urlpatterns = [
     path('check-request-status/', views.check_request_status, name='check_request_status'),
     path('progress-check/', views.progress_check, name='progress_check_no_number'),
     path('progress-check/<str:request_number>/', views.progress_check, name='progress_check'), 
-
+    path('request_submitted/', views.request_submitted, name='request_submitted.html'),
+    
     # Property Manager API URLs
     path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
     path('api/login/', views.login, name='login'),
