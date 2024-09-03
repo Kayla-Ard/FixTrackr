@@ -43,8 +43,10 @@
 
             <div class="second-section">
                 <h3>Contractor Information</h3>
-                <p> {{ contractor_name }}</p>
+                <p> {{ contractor_name }}</p> 
                 <p> {{ contractor_phone }}</p>
+                <p><i>When the property manager enters a contractors name & number it will appear here</i></p>
+            
             </div>
             
 
@@ -62,7 +64,8 @@
             </div>
 
             <div class="forth-section">
-                <h3>Message from your property manager:</h3>
+                <h3>Message from your property manager: </h3>
+                <p><i>When the property manager writes a message to the tenant it will appear here</i></p>
                 <p> {{ property_manager_message }}</p>
             </div>
             
@@ -72,7 +75,7 @@
                 <p>Full Name: {{ maintenance_request.full_name }}</p>
                 <p>Email: {{ maintenance_request.email }}</p>
                 <p>Subject: {{ maintenance_request.subject }}</p>
-                <p>Message: {{ maintenance_request.message }}</p>
+                <p>Message: <br>{{ maintenance_request.message }}</p>
                 <p>Availability: {{ maintenance_request.availability }}</p> 
             </div>            
             
