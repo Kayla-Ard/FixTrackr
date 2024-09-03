@@ -38,6 +38,7 @@ def generate_request_number():
 def submit_request(request):
     if request.method == 'POST':
         form = MaintenanceRequestForm(request.POST, request.FILES)
+        print("FILES:", request.FILES)
         if form.is_valid():
             maintenance_request = form.save(commit=False)
             maintenance_request.date_sent = timezone.now()
@@ -54,19 +55,19 @@ def submit_request(request):
                 maintenance_request.save()
 
                 if 'images' in request.FILES:
-                    for image_file in request.FILES.getlist('images'):
-                        image = Image(file=image_file, maintenance_request=maintenance_request)
-                        image.save()
-                # Redirect to a success page or show a success message
-                return redirect('request_submitted', request_number=maintenance_request.request_number)
+                    image_file = request.FILES['images']
+                    image = Image(file=image_file, maintenance_request=maintenance_request)
+                    image.save()
+                # Use reverse to construct the URL correctly
+                url = reverse('request_submitted', args=[maintenance_request.request_number])
+                print(f"Redirecting to {url}")
+                return redirect(url)
             
             except Exception as e:
                 print(f"Error occurred while saving maintenance request: {e}")
-                
                 return render(request, 'submit_request.html', {'form': form, 'error': 'An error occurred while saving the request'})
         else:
-            errors = form.errors.as_json()
-            print(f"Form errors: {errors}")
+            print(form.errors)
             return render(request, 'submit_request.html', {'form': form, 'errors': form.errors})
     else:
         form = MaintenanceRequestForm()
@@ -77,14 +78,12 @@ def submit_request(request):
 
 
 
-def request_submitted(request):
-    # Extract the request_number from the query parameters
-    request_number = request.GET.get('request_number', 'Unknown')
-
-    # Render the request_submitted.html template with the request_number
-    return render(request, 'request_submitted.html', {
+def request_submitted(request, request_number=None):
+    context = {
         'request_number': request_number
-    })
+    }
+    return render(request, 'request_submitted.html', context)
+
     
     
     

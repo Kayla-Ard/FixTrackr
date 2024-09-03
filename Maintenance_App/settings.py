@@ -179,8 +179,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Maximum size (in bytes) for uploaded files
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
-# Maximum size (in bytes) for the data upload request
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # frontend's URL local
@@ -193,7 +192,8 @@ DEFAULT_FROM_EMAIL = 'Fixtrackr@TenantUpdate.com'
 
 # my_project/settings.py
 AUTHENTICATION_BACKENDS = [
-    'app.authentication_backends.EmailBackend'
+    'app.authentication_backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 

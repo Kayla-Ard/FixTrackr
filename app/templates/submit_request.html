@@ -76,9 +76,9 @@
                 <!-- Images Field -->
                 <div class="form-group">
                     <div class="file-upload-container">
-                        <input type="file" id="images" name="images" multiple>
+                        <input type="file" id="images" name="images">
                         <label for="images" class="file-upload-label">
-                            Attach Up To 4 Images
+                            Attach Image
                         </label>
                         <span class="file-upload-icon">📎</span>
                         {% if form.images.errors %}
@@ -124,12 +124,7 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const formSection = document.querySelector('.form-section');
             
-            if (formSection) {
-                formSection.scrollTop = 0; // Ensure the form content starts at the top
-            }
-    
             const fileInputs = document.querySelectorAll('input[type="file"]');
             const fileIcons = document.querySelectorAll('.file-upload-icon');
             const fileLabels = document.querySelectorAll('.file-upload-label');
@@ -160,50 +155,39 @@
                     }
                 });
             });
-    
-            // Adjust textarea height based on content
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(function(textarea) {
-                textarea.addEventListener('input', function() {
+
+            // Handle real-time character count and textarea height adjustment
+            const messageTextarea = document.querySelector('#message-box textarea');
+            const charLimitMessage = document.querySelector(".character-limit");
+
+            if (messageTextarea && charLimitMessage) {
+                messageTextarea.addEventListener("input", function() {
+                    // Update the remaining characters count
+                    const remaining = 500 - messageTextarea.value.length;
+                    charLimitMessage.textContent = `${remaining} characters remaining`;
+
+                    // Adjust textarea height based on content
                     this.style.height = 'auto';
                     this.style.height = this.scrollHeight + 'px';
                 });
-                textarea.dispatchEvent(new Event('input'));
-            });
-    
-            // New code to target the specific textarea for the message box
-            const messageTextarea = document.querySelector('#message-box textarea');
-            if (messageTextarea) {
-                messageTextarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = (this.scrollHeight) + 'px';
-                });
+
+                // Trigger the input event initially to set the character count and adjust height
                 messageTextarea.dispatchEvent(new Event('input'));
             }
-    
-            // Real-time character count for the message box
-            const charLimitMessage = document.querySelector(".character-limit");
-            if (messageTextarea && charLimitMessage) {
-                messageTextarea.addEventListener("input", function() {
-                    const remaining = 500 - messageTextarea.value.length;
-                    charLimitMessage.textContent = `${remaining} characters remaining`;
-                });
-            } 
 
-            // Handle form submission 
+
             const form = document.querySelector('.maintenance-form');
 
             if (form) {
                 form.addEventListener('submit', function(event) {
-                    
                 });
             }
+
         });
             
     </script>
 </body>
 </html>
-
 
 
 

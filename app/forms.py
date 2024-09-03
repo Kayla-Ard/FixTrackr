@@ -1,6 +1,6 @@
 from django import forms
 from .models import MaintenanceRequest
-from .widgets import CustomClearableFileInput
+# from .widgets import CustomClearableFileInput
 
 
 
@@ -34,9 +34,9 @@ class MaintenanceRequestForm(forms.ModelForm):
         error_messages={'required': "Please enter a message for your property manager"}
     )
     images = forms.FileField(
-        widget=CustomClearableFileInput(attrs={'multiple': True}),
+        widget=forms.ClearableFileInput(),
         required=False,
-        label="Attach Images",
+        label="Attach Image",
     )
     availability = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Monday - Friday 3PM - 6PM'}),
@@ -47,6 +47,4 @@ class MaintenanceRequestForm(forms.ModelForm):
     class Meta:
         model = MaintenanceRequest
         fields = ['full_name', 'email', 'subject', 'message', 'images', 'availability']
-        widgets = {
-            'message': forms.Textarea(attrs={'maxlength': '500'}),
-        }
+        

@@ -12,11 +12,12 @@ urlpatterns = [
     
     # Tenant URLs
     path('', views.tenant_home, name='tenant_home'),
-    path('submit-request/', views.submit_request, name='submit_request'),
     path('check-request-status/', views.check_request_status, name='check_request_status'),
     path('progress-check/', views.progress_check, name='progress_check_no_number'),
     path('progress-check/<str:request_number>/', views.progress_check, name='progress_check'), 
-    path('request_submitted/', views.request_submitted, name='request_submitted'),
+    path('submit-request/', views.submit_request, name='submit_request'),
+    path('request_submitted/<str:request_number>/', views.request_submitted, name='request_submitted'),
+
     
     # Property Manager API URLs
     path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
