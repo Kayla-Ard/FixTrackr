@@ -66,7 +66,8 @@ class MaintenanceRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     unit = models.ForeignKey(Unit, related_name='maintenance_requests', on_delete=models.CASCADE, null=True, blank=True)
     property_manager = models.ForeignKey(Property_Manager, related_name='maintenance_requests', on_delete=models.CASCADE, null=True, blank=True)
-
+    request_number = models.CharField(max_length=100, null=True, blank=True)
+    
     def __str__(self):
         return f"Request by {self.full_name}"
 

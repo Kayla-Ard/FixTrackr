@@ -19,9 +19,11 @@ class PropertyManagerSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class UnitSerializer(serializers.ModelSerializer):
+    tenant_full_name = serializers.CharField(source='tenant.full_name')
+    tenant_email = serializers.EmailField(source='tenant.email')
     class Meta:
         model = Unit
-        fields = '__all__'
+        fields = ['id', 'title', 'address', 'tenant_full_name', 'tenant_email', 'notes']
 
 class TenantSerializer(serializers.ModelSerializer):
     class Meta:

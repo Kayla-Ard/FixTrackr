@@ -2,6 +2,8 @@
 {% load tz %}
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,8 +52,8 @@
                 <div class="status-container">
                     {% for status in statuses %}
                     <div class="status-item">
-                        <span class="status-label {% if forloop.counter0 <= current_index %}active{% endif %}">
-                            {{ status|safe }}  <!-- safe filter is used to render HTML tags in Django template -->
+                        <span class="status-label {% if forloop.counter0 <= current_index %}active{% endif %}" data-status="{{ status }}">
+                            {{ status|safe}}  <!-- safe filter is used to render HTML tags in Django template -->
                         </span>
                         <div class="progress-bar {% if forloop.counter0 <= current_index %}active{% endif %}"></div>
                     </div>
@@ -60,8 +62,8 @@
             </div>
 
             <div class="forth-section">
-                <h3>Message from your property manager</h3>
-                <p> {{ contractor_message }}</p>
+                <h3>Message from your property manager:</h3>
+                <p> {{ property_manager_message }}</p>
             </div>
             
             <div class="bottom-section">
@@ -83,5 +85,19 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusLabels = document.querySelectorAll('.status-label');
+    
+            statusLabels.forEach(function(label) {
+                if (label.innerText.includes('Request Read')) {
+                    label.innerHTML = label.innerHTML.replace('Request Read', 'Request<br>Read');
+                }
+            });
+        });
+    </script>
+    
+    
+    
 </body>
 </html>

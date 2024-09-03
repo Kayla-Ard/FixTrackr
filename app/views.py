@@ -89,19 +89,34 @@ def request_submitted(request, request_number=None):
     
     
 def check_request_status(request):
-    error_message = None  # Initialize the error message as None
+    error_message = None  
 
     if request.method == 'POST':
-        request_number = request.POST.get('request_number').strip()
-
-        # Validate if the request number exists in the database
-        maintenance_request = MaintenanceRequest.objects.filter(request_number=request_number).first()
-        if not maintenance_request:
-            error_message = "Request number not found. Please try again."
-        else:
-            # If the request number is valid, redirect to the progress check page
-            return redirect('progress_check', request_number=request_number)
-
+        request_number = request.POST.get('request_number').strip().upper()
+        print(f"Received request number: {request_number}")
+        
+        if not request_number:
+            error_message = "Please enter a request number."
+            print(f"Error: {error_message}")
+            
+        try:
+            # Validate if the request number exists in the database
+            maintenance_request = MaintenanceRequest.objects.filter(request_number=request_number).first()
+            print(f"Maintenance request found: {maintenance_request}")
+            
+            if not maintenance_request:
+                error_message = "Request number not found. Please try again."
+                print(f"Error: {error_message}")
+                
+            else:
+                url = reverse('progress_check', args=[request_number])
+                print("Redirecting to URL:", url)
+                return redirect(url)
+            
+        except Exception as e:
+            print(f"Error occurred during the request status check: {e}")
+            error_message = "An unexpected error occurred. Please try again."
+            
     # If the method is GET or the request number is invalid, render the form with any error message
     return render(request, 'check_request_status.html', {'error_message': error_message})
 
@@ -114,46 +129,58 @@ def validate_request_number(request_number):
     return request_number in valid_request_numbers
 
 
+
+
 def progress_check(request, request_number=None):
-    if request_number:
-        maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
-        print(f"Found maintenance request: {maintenance_request}")
-    else:
-        # Mock data for development purposes
-        maintenance_request = {
-            'request_number': 'ABC0001',
-            'property_manager': {'name': 'John Doe'},
-            'status': 'Request Sent',  
-            'full_name': 'Jane Smith',
-            'email': 'jane@example.com',
-            'subject': 'Leaky faucet',
-            'message': 'The kitchen faucet has been leaking for a week.',
-        }
-    
-    # Safely handle the property_manager
-    property_manager_name = maintenance_request.property_manager.name if maintenance_request and maintenance_request.property_manager else 'N/A'
-    print(f"Property Manager: {property_manager_name}")
-    
-    statuses = ['Request<br>Sent', 'Request<br>Read', 'Contractor<br>Called', 'Appointment<br>Set', 'Request<br>Complete']
-
-    # Safely handle cases where the status might not be in the list
-    current_index = -1
-    if maintenance_request:
-        if maintenance_request.status in statuses:
-            current_index = statuses.index(maintenance_request.status)
-            print(f"Current index of status '{maintenance_request.status}': {current_index}")
+    try:
+        if request_number:
+            maintenance_request = get_object_or_404(MaintenanceRequest, request_number=request_number)
+            print(f"Found maintenance request: {maintenance_request}")
         else:
-            print(f"Status '{maintenance_request.status}' not found in predefined statuses.")
+            
+            maintenance_request = None
+        
+        # Safely handle the property_manager
+        property_manager_name = (
+            f"{maintenance_request.property_manager.first_name} {maintenance_request.property_manager.last_name}"
+            if maintenance_request and maintenance_request.property_manager 
+            else 'N/A'
+        )
+        print(f"Property Manager: {property_manager_name}")
+        
+        statuses = ['Request Sent', 'Request Read', 'Contractor Called', 'Appointment Set', 'Request Complete']
 
-    return render(request, 'progress_check.html', {
-        'maintenance_request': maintenance_request,
-        'statuses': statuses,
-        'current_index': current_index,
-        'property_manager_name': property_manager_name,
-        'contractor_name': maintenance_request.contractor_name or '', 
-        'contractor_phone': maintenance_request.contractor_phone or '',
-        'contractor_message': maintenance_request.contractor_message or '',
-    })
+
+        # Safely handle cases where the status might not be in the list
+        current_index = -1
+        if maintenance_request:
+            if maintenance_request.status in statuses:
+                current_index = statuses.index(maintenance_request.status)
+                print(f"Current index of status '{maintenance_request.status}': {current_index}")
+            else:
+                print(f"Status '{maintenance_request.status}' not found in predefined statuses.")
+        
+        # Print out everything being sent to the template
+
+        context = {
+            'maintenance_request': maintenance_request,
+            'statuses': statuses,
+            'current_index': current_index,
+            'property_manager_name': property_manager_name,
+            'contractor_name': maintenance_request.contractor_name or '', 
+            'contractor_phone': maintenance_request.contractor_phone or '',
+            'property_manager_message': maintenance_request.property_manager_message or '',
+        }
+        # Print the entire context to help with debugging
+        print("Context being sent to template:", context)
+            
+        return render(request, 'progress_check.html', context)
+        
+    except Exception as e:
+        print(f"Error in progress_check view: {e}")
+        return render(request, 'progress_check.html', {
+            'error_message': 'An unexpected error occurred. Please try again later.',
+        })
     
 # debugging output to see what files are being passed
 def value_from_datadict(self, data, files, name):
@@ -224,9 +251,9 @@ def register_property_manager(request):
             )
 
         # Generate JWT tokens or perform login
-        user = authenticate(username=data['email'], password=data['password'])
-        if user is None:
-            return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        # user = authenticate(username=data['email'], password=data['password'])
+        # if user is None:
+        #     return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
         
 
         return Response({
@@ -324,15 +351,34 @@ from rest_framework.permissions import IsAuthenticated
 
 
 
-# List all units
+# List all units with property manager's name
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def list_units(request):
+#     property_manager = get_object_or_404(Property_Manager, email=request.user.email)
+#     units = Unit.objects.filter(property_manager=property_manager)
+#     serializer = UnitSerializer(units, many=True)
+#     return Response(serializer.data)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_units(request):
+    # Get the property manager associated with the authenticated user
     property_manager = get_object_or_404(Property_Manager, email=request.user.email)
-    units = Unit.objects.filter(property_manager=property_manager)
-    serializer = UnitSerializer(units, many=True)
-    return Response(serializer.data)
 
+    # Retrieve all units associated with this property manager
+    units = Unit.objects.filter(property_manager=property_manager)
+
+    # Serialize the units
+    serialized_units = UnitSerializer(units, many=True).data
+
+    # Structure the response to include the property manager's first name and the list of units
+    response_data = {
+        'property_manager_first_name': property_manager.first_name,
+        'units': serialized_units
+    }
+
+    return Response(response_data)
 
 
 

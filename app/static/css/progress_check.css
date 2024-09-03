@@ -132,15 +132,29 @@ body {
     flex-basis: 0;
     flex-grow: 1; 
     text-align: center; 
-    width: 98.4px;
+    width: 94px
 }
 
 .status-label {
+    display: inline-block;
     font-size: 16px;
     color: #333333;
     text-align: center;
     font-weight: 400;
     font-family: "Open Sans";
+    max-width: 100px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.status-label::after {
+    content: " "; /* Add space where needed */
+}
+
+.status-label[data-status="Request Read"] {
+    white-space: pre-wrap; /* Preserve the line breaks */
 }
 
 .status-label.active {
