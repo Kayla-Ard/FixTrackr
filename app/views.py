@@ -205,8 +205,9 @@ def value_from_datadict(self, data, files, name):
 @api_view(['POST'])
 def register_property_manager(request):
     data = request.data
-    password = data.get('password', '')
-    confirm_password = data.get('confirm_password', '')
+    password = data.get('password', '').strip()
+    confirm_password = data.get('confirm_password', '').strip()
+    email = data.get('email', '').lower().strip()
 
     # Debugging: log the passwords
     print(f"Password: '{password}', Confirm Password: '{confirm_password}'")
@@ -216,14 +217,14 @@ def register_property_manager(request):
 
     try:
         # Validate email uniqueness
-        if User.objects.filter(email=data['email']).exists():
+        if User.objects.filter(email=email).exists():
             return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create user
         user = User.objects.create_user(
-            username=data['email'],
-            email=data['email'],
-            password=data['password'],
+            username=email,
+            email=email,
+            password=password,
             first_name=data['first_name'],
             last_name=data['last_name']
         )
@@ -237,7 +238,7 @@ def register_property_manager(request):
             user=user,
             first_name=data['first_name'],
             last_name=data['last_name'],
-            email=data['email']
+            email=email
 
         )
 
@@ -251,9 +252,9 @@ def register_property_manager(request):
             )
 
         # Generate JWT tokens or perform login
-        # user = authenticate(username=data['email'], password=data['password'])
-        # if user is None:
-        #     return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        user = authenticate(username=data['email'], password=data['password'])
+        if user is None:
+            return Response({"error": "Authentication failed"}, status=status.HTTP_401_UNAUTHORIZED)
         
 
         return Response({
@@ -274,7 +275,7 @@ def register_property_manager(request):
 # Property manager login endpoint
 @api_view(['POST'])
 def login(request):
-    email = request.data.get('email')
+    email = request.data.get('email').lower().strip()
     password = request.data.get('password')
 
     # Normalize the email by converting it to lowercase and stripping any spaces
