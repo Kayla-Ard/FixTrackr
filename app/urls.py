@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/notifications/', views.list_notifications, name='list_notifications'),
     path('api/maintenance-requests/read/<int:request_id>/', views.mark_request_as_read, name='mark_request_as_read'),
     path('api/notifications/create/', views.create_notification, name='create_notification'),
+    path('api/notifications/create-alert-notification/', views.create_alert_notification, name='create_alert_notification'),
     
     # Manage a specific maintenance request
     path('api/maintenance-requests/manage/<int:request_id>/', views.manage_maintenance_request, name='manage_maintenance_request'),

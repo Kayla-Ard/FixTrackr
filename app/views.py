@@ -434,6 +434,35 @@ def delete_unit(request, id):
 
 
 
+# Notification to alter property manager 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_alert_notification(request):
+    try:
+        # Retrieve maintenance request details from the request body
+        maintenance_request_id = request.data.get('maintenance_request_id')
+        
+        # Fetch the maintenance request instance
+        maintenance_request = MaintenanceRequest.objects.get(id=maintenance_request_id)
+        
+        # Extract subject and unit title
+        subject = maintenance_request.subject
+        unit_title = maintenance_request.unit.title if maintenance_request.unit else 'N/A'
+        
+        # Return only the unit title and subject in the response
+        return Response({
+            "unit_title": unit_title,
+            "subject": subject,
+        }, status=201)
+    
+    except MaintenanceRequest.DoesNotExist:
+        return Response({"error": "Maintenance request not found"}, status=404)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+
+
 
 # List notifications
 @api_view(['GET'])
