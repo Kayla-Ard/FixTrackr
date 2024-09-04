@@ -58,11 +58,20 @@ def submit_request(request):
                     image_file = request.FILES['images']
                     image = Image(file=image_file, maintenance_request=maintenance_request)
                     image.save()
+                
+                
+                # Create a notification for the property manager
+                Notification.objects.create(
+                    property_manager=maintenance_request.property_manager,
+                    maintenance_request=maintenance_request,
+                    message=f"You have a new maintenance request from {maintenance_request.full_name}."
+                )
+                
                 # Use reverse to construct the URL correctly
                 url = reverse('request_submitted', args=[maintenance_request.request_number])
                 print(f"Redirecting to {url}")
                 return redirect(url)
-            
+                
             except Exception as e:
                 print(f"Error occurred while saving maintenance request: {e}")
                 return render(request, 'submit_request.html', {'form': form, 'error': 'An error occurred while saving the request'})
@@ -352,14 +361,6 @@ from rest_framework.permissions import IsAuthenticated
 
 
 
-# List all units with property manager's name
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def list_units(request):
-#     property_manager = get_object_or_404(Property_Manager, email=request.user.email)
-#     units = Unit.objects.filter(property_manager=property_manager)
-#     serializer = UnitSerializer(units, many=True)
-#     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -382,6 +383,28 @@ def list_units(request):
     return Response(response_data)
 
 
+
+
+# List Unit by id
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unit_by_id(request, id):
+    # Get the property manager associated with the authenticated user
+    property_manager = get_object_or_404(Property_Manager, email=request.user.email)
+
+    # Retrieve the unit associated with this property manager and the specified ID
+    unit = get_object_or_404(Unit, id=id, property_manager=property_manager)
+
+    # Serialize the unit
+    serialized_unit = UnitSerializer(unit).data
+
+    # Structure the response to include the property manager's first name and the unit details
+    response_data = {
+        'property_manager_first_name': property_manager.first_name,
+        'unit': serialized_unit
+    }
+
+    return Response(response_data)
 
 
 
@@ -435,7 +458,44 @@ def list_notifications(request):
 
 
 
-# Endpoint to mark request as sent & trigger automated email to tenant
+# Create a notification when a new maintenance request is submitted
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_notification(request):
+    try:
+        # Retrieve maintenance request details from the request body
+        maintenance_request_id = request.data.get('maintenance_request_id')
+        message = request.data.get('message', 'New maintenance request received.')
+        
+        # Fetch the maintenance request instance
+        maintenance_request = MaintenanceRequest.objects.get(id=maintenance_request_id)
+        
+        # Get the property manager associated with this maintenance request
+        property_manager = maintenance_request.property_manager
+        
+        # Create a new notification for the property manager
+        notification = Notification.objects.create(
+            property_manager=property_manager,
+            maintenance_request=maintenance_request,
+            message=message
+        )
+        
+        return Response({
+            "detail": "Notification created successfully",
+            "notification_id": notification.id,
+            "message": notification.message
+        }, status=201)
+    
+    except MaintenanceRequest.DoesNotExist:
+        return Response({"error": "Maintenance request not found"}, status=404)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+
+
+
+# mark request as sent & trigger automated email to tenant
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_request_as_read(request, request_id):
