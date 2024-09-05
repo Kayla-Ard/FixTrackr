@@ -211,6 +211,7 @@ def value_from_datadict(self, data, files, name):
 
 # PWA RESTful API endpoints
 
+# Register property manager 
 @api_view(['POST'])
 def register_property_manager(request):
     data = request.data
@@ -450,11 +451,11 @@ def create_alert_notification(request):
         
         # Fetch the unit related to this maintenance request and extract its title
         unit = maintenance_request.unit
-        unit_title = unit.title if unit else 'N/A'
+        title = unit.title if unit else 'N/A'
 
         # Return only the unit title and subject in the response
         return Response({
-            "unit_title": unit_title,
+            "title": title,
             "subject": subject,
         }, status=201)
 

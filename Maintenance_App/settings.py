@@ -62,6 +62,7 @@ REST_FRAMEWORK = {
 
 # Simple JWT settings (we can customize these as needed)
 SIMPLE_JWT = {
+    'AUTH_COOKIE': 'refresh_token',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,

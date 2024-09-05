@@ -1,9 +1,4 @@
-# This code snippet is defining URL patterns for a Django web application. Each `path` function call
-# maps a URL pattern to a specific view function within the application. Here's a breakdown of what
-# each part is doing:
-# This code snippet is defining URL patterns for a Django web application. In Django, URL patterns are
-# defined in the `urlpatterns` list within the `urls.py` file of an app. Each URL pattern is
-# associated with a specific view function that will be called when a matching URL is accessed.
+
 from django.urls import path
 from . import views
 
