@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # export SECRET_KEY='23456ytgfcvgh9876543wsdfgbji876545tgh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 

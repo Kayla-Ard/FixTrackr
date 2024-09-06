@@ -19,7 +19,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseServerError
+
 
 
 
@@ -37,9 +37,11 @@ def generate_request_number():
 
 def submit_request(request):
     if request.method == 'POST':
+        print("Received POST request")
         form = MaintenanceRequestForm(request.POST, request.FILES)
         print("FILES:", request.FILES)
         if form.is_valid():
+            print("Form is valid")
             maintenance_request = form.save(commit=False)
             maintenance_request.date_sent = timezone.now()
             maintenance_request.request_number = generate_request_number()
@@ -47,25 +49,35 @@ def submit_request(request):
             try:
                 tenant = Tenant.objects.get(email=maintenance_request.email)
                 maintenance_request.property_manager = tenant.property_manager
+                print(f"Found tenant: {tenant.full_name}")
+                # Get the unit associated with the tenant
+                unit = tenant.unit
+                print(f"Found unit title: ")
             except Tenant.DoesNotExist:
-                
+                print("Tenant not found")
                 return render(request, 'submit_request.html', {'form': form, 'error': 'Tenant not found'})
             
             try:
                 maintenance_request.save()
+                print("Maintenance request saved")
 
                 if 'images' in request.FILES:
+                    print("Processing images")
                     image_file = request.FILES['images']
                     image = Image(file=image_file, maintenance_request=maintenance_request)
                     image.save()
+                    print(f"Saved image: {image_file.name}")
                 
                 
                 # Create a notification for the property manager
                 Notification.objects.create(
                     property_manager=maintenance_request.property_manager,
                     maintenance_request=maintenance_request,
-                    message=f"You have a new maintenance request from {maintenance_request.full_name}."
+                    message=f"You have a new maintenance request from {maintenance_request.full_name}.",
+                    subject=maintenance_request.subject,  # The subject from the maintenance request
+                    unit_title=unit.title  # The unit title from the tenant's unit 
                 )
+                print("Notification created")
                 
                 # Use reverse to construct the URL correctly
                 url = reverse('request_submitted', args=[maintenance_request.request_number])

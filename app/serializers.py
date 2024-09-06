@@ -31,6 +31,9 @@ class TenantSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class NotificationSerializer(serializers.ModelSerializer):
+    unit_title = serializers.CharField(source='tenant.unit.title', read_only=True)  # Assuming tenant has a unit
+
     class Meta:
         model = Notification
+        # fields = ['id', 'message', 'unit_title', 'created_at'] 
         fields = '__all__'

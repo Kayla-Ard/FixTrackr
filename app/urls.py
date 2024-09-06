@@ -33,7 +33,6 @@ urlpatterns = [
     
     # Manage a specific maintenance request
     path('api/maintenance-requests/manage/<int:request_id>/', views.manage_maintenance_request, name='manage_maintenance_request'),
-
 ]
 
 

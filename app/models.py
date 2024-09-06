@@ -19,10 +19,11 @@ class Tenant(models.Model):
     full_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     property_manager = models.ForeignKey(Property_Manager, related_name='tenants', on_delete=models.CASCADE)
+    unit = models.ForeignKey(Unit, related_name='tenants', on_delete=models.CASCADE, null=True, blank=True)  
 
     def __str__(self):
         return self.full_name
-
+    
 # Unit models
 class Unit(models.Model):
     title = models.CharField(max_length=255)
@@ -34,7 +35,15 @@ class Unit(models.Model):
     def __str__(self):
         return f"{self.title} - {self.address}"
     
+# Tenant model (for linking tenants to a property manager)
+class Tenant(models.Model):
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    property_manager = models.ForeignKey(Property_Manager, related_name='tenants', on_delete=models.CASCADE)
+    unit = models.ForeignKey(Unit, related_name='tenants', on_delete=models.CASCADE, null=True, blank=True)  
 
+    def __str__(self):
+        return self.full_name
 
 # Maintenance request model for tenants
 class MaintenanceRequest(models.Model):
@@ -84,6 +93,8 @@ class Notification(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
-
+    unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, null=True, blank=True)
+    tenant = models.ForeignKey(Tenant, on_delete=models.SET_NULL, null=True, blank=True)
+    
     def __str__(self):
         return f"Notification for {self.property_manager.first_name} {self.property_manager.last_name}"
