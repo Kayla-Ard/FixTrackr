@@ -1,7 +1,6 @@
-
 from django.urls import path
 from . import views
-
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     
@@ -13,26 +12,26 @@ urlpatterns = [
     path('submit-request/', views.submit_request, name='submit_request'),
     path('request_submitted/<str:request_number>/', views.request_submitted, name='request_submitted'),
 
-    
     # Property Manager API URLs
-    path('api/register-property-manager/', views.register_property_manager, name='register_property_manager'),
-    path('api/login/', views.login, name='login'),
+    path('api/register-property-manager/', views.RegisterPropertyManager.as_view(), name='register_property_manager'),
+    path('api/login/', views.Login.as_view(), name='login'),
+    path('api/refresh-token/',TokenRefreshView.as_view(),name="refresh-token"),
     
     # Unit management URLs
-    path('api/units/', views.list_units, name='list_units'),
-    path('api/units/create/', views.create_unit, name='create_unit'),
-    path('api/units/update/<int:id>/', views.update_unit, name='update_unit'),
-    path('api/units/delete/<int:id>/', views.delete_unit, name='delete_unit'),
-    path('api/units/<int:id>/', views.get_unit_by_id, name='get_unit_by_id'),
+    path('api/units/', views.GetUnits.as_view(), name='list_units'),
+    path('api/units/create/', views.CreateUnit.as_view(), name='create_unit'),
+    path('api/units/<int:pk>/', views.UnitsView.as_view(), name='unit-detail'),
+
     
     # Notifications URLs
-    path('api/notifications/', views.list_notifications, name='list_notifications'),
-    path('api/maintenance-requests/read/<int:request_id>/', views.mark_request_as_read, name='mark_request_as_read'),
-    path('api/notifications/create/', views.create_notification, name='create_notification'),
-    path('api/notifications/create-alert-notification/', views.create_alert_notification, name='create_alert_notification'),
+    path('api/notifications/', views.GetNotifications.as_view(), name='list_notifications'),
+    path('api/notifications/read/<int:pk>/', views.ReadNotification.as_view(), name='mark_request_as_read'),
     
     # Manage a specific maintenance request
-    path('api/maintenance-requests/manage/<int:request_id>/', views.manage_maintenance_request, name='manage_maintenance_request'),
+    path('api/maintenance-requests/',views.GetMaintenanceRequests.as_view(), name = "get-requests"),
+    path('api/submit-request/', views.CreateMaintenanceRequest.as_view(), name='create-request'),
+    path('api/maintenance/<int:pk>/', views.GetMaintenanceRequest.as_view(), name='get_request'),
+    path('api/maintenance/update/<int:pk>/', views.EditMaintenanceRequest.as_view(), name='update_request'),
 ]
 
 

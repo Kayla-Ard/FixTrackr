@@ -23,7 +23,7 @@ class MaintenanceRequestForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Enter maintenance issue', 'class': 'form-control'}),
         error_messages={'required': "Please enter subject line for maintenance issue"}
     )
-    message = forms.CharField(
+    tenant_message = forms.CharField(
         max_length=500,
         label='Message',
         widget=forms.Textarea(attrs={
@@ -46,5 +46,5 @@ class MaintenanceRequestForm(forms.ModelForm):
 
     class Meta:
         model = MaintenanceRequest
-        fields = ['full_name', 'email', 'subject', 'message', 'images', 'availability']
+        fields = ['full_name', 'email', 'subject', 'tenant_message', 'images', 'availability']
         

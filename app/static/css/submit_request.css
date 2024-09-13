@@ -262,6 +262,18 @@ textarea::placeholder {
     width: 100%;
 }
 
+.file-info{
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.file-item{
+    display: flex;
+    align-items: center;
+    flex-grow: 1; 
+}
+
 /* Media query for smaller screens */
 @media (max-width: 768px) {
     .main-container {
