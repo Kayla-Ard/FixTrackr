@@ -193,6 +193,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # frontend's URL local
+    "https://fixtrackr.vercel.app",  # your deployed frontend on Vercel
     
 ]
 
