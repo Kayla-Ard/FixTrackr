@@ -110,11 +110,11 @@
                 <div class="form-group">
                     <div id="fileNames"></div>
                     <div class="file-upload-container">
-                        <input type="file" id="images" name="images" multiple accept="image/*">
+                        <input type="file" id="images" name="images" multiple accept="image/*" style="display: none;">
                         <label for="images" class="file-upload-label">
                             Attach Image
+                            <span class="file-upload-icon">📎</span>
                         </label>
-                        <span class="file-upload-icon">📎</span>
                         {% if form.images.errors %}
                         <div class="error-message">
                             {{ form.images.errors.as_text }}
