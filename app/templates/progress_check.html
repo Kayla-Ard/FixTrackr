@@ -38,17 +38,13 @@
                 <h3>Progress Check</h3>
                 <p>Request #{{ maintenance_request.request_number }}</p>
                 <p>Property Manager: {{ property_manager_name }}</p>
-
             </div>
 
             <div class="second-section">
                 <h3>Contractor Information</h3>
                 <p> {{ contractor_name }}</p> 
                 <p> {{ contractor_phone }}</p>
-                <p><i>When the property manager enters a contractors name & number it will appear here</i></p>
-            
             </div>
-            
 
             <div class="middle-section">
                 <div class="status-container">
@@ -65,7 +61,6 @@
 
             <div class="forth-section">
                 <h3>Message from your property manager: </h3>
-                <p><i>When the property manager writes a message to the tenant it will appear here</i></p>
                 <p> {{ property_manager_message }}</p>
             </div>
             
@@ -99,8 +94,5 @@
             });
         });
     </script>
-    
-    
-    
 </body>
 </html>
